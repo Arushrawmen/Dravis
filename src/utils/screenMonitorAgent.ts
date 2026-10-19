@@ -58,6 +58,11 @@ const NAVIGATION_ALIASES: Array<{
     keywords: ["gmail", "email", "emails", "mailbox", "inbox", "जीमेल", "ईमेल", "मेल", "mail"],
   },
   {
+    tab: "DRIVE",
+    spokenName: "Google Drive Cloud Storage",
+    keywords: ["drive", "google drive", "gdrive", "cloud storage", "drive files", "ड्राइव", "गूगल ड्राइव"],
+  },
+  {
     tab: "FILES",
     spokenName: "Files & Real Folder Creator",
     keywords: ["files", "file manager", "folder panel", "repository", "फाइल्स", "फोल्डर पैनल"],

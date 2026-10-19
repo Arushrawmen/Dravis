@@ -23,6 +23,7 @@ import {
   Phone,
   PhoneOff,
   Mail,
+  HardDrive,
   Mic,
   MicOff,
   X,
@@ -1773,6 +1774,7 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                     <div className="grid grid-cols-2 gap-2">
                       {[
                         { tab: "GMAIL" as NavigationTab, label: "Gmail Mailbox", icon: Mail },
+                        { tab: "DRIVE" as NavigationTab, label: "Google Drive", icon: HardDrive },
                         { tab: "SETTINGS" as NavigationTab, label: "AI & Voice Settings", icon: Settings },
                         { tab: "PROFILE" as NavigationTab, label: "User Profile", icon: User },
                         { tab: "FILES" as NavigationTab, label: "Files & AAB Builder", icon: FolderKanban },

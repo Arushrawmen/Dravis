@@ -10,6 +10,7 @@ export type NavigationTab =
   | "MICRO_DECISION"
   | "CHAT"
   | "GMAIL"
+  | "DRIVE"
   | "LEARNING"
   | "HISTORY"
   | "PROFILE"

@@ -20,6 +20,7 @@ import { AutomationView } from "./components/AutomationView";
 import { FilesView } from "./components/FilesView";
 import { SystemView } from "./components/SystemView";
 import { GmailConsole } from "./components/Gmail/GmailConsole";
+import { DriveConsole } from "./components/Drive/DriveConsole";
 import { AuthScreen } from "./components/AuthScreen";
 import { FamilySupervisionView } from "./components/FamilySupervisionView";
 import { DynamicIslandNotch } from "./components/DynamicIslandNotch";
@@ -2377,6 +2378,38 @@ export default function App() {
       return;
     }
 
+    // Check if user is asking to access Google Drive / Cloud Files
+    const isDriveIntent =
+      lowerCmd.includes("google drive") ||
+      lowerCmd.includes("gdrive") ||
+      /\b(open\s+drive|check\s+drive|show\s+drive|drive\s+files|cloud\s+files|drive\s+kholo|गूगल\s+ड्राइव|ड्राइव\s+खोलो)\b/i.test(
+        lowerCmd
+      );
+
+    if (isDriveIntent) {
+      setActiveTab("DRIVE");
+      if (isAndroidResolutionActive) {
+        setActiveDesktopModuleInAndroid("DRIVE");
+      }
+      const resp =
+        "Opening Google Drive Workspace Hub, Sir. You can browse, upload, create folders, and manage your cloud storage files.";
+      const userMsg: MessageItem = {
+        id: "msg-" + Date.now(),
+        role: "user",
+        text: commandText,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      const assistantMsg: MessageItem = {
+        id: "msg-" + (Date.now() + 1),
+        role: "assistant",
+        text: resp,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+      setMessages((prev) => [...prev, userMsg, assistantMsg]);
+      speakVoiceResponse("Opening Google Drive Cloud Storage, Sir.");
+      return;
+    }
+
     // Check if user is asking for Android CLI / Google Android Studio CLI
     const isAndroidCliIntent =
       lowerCmd.includes("android cli") ||
@@ -3739,6 +3772,14 @@ export default function App() {
                   onClose={() => setActiveDesktopModuleInAndroid(null)}
                 />
               )}
+              {activeDesktopModuleInAndroid === "DRIVE" && (
+                <DriveConsole
+                  onSpeak={speakVoiceResponse}
+                  soundEffectsEnabled={userProfile.soundEffects}
+                  isCompact={true}
+                  onClose={() => setActiveDesktopModuleInAndroid(null)}
+                />
+              )}
               {activeDesktopModuleInAndroid === "HISTORY" && (
                 <HistoryView
                   memories={memories}
@@ -4113,6 +4154,13 @@ export default function App() {
 
           {activeTab === "GMAIL" && (
             <GmailConsole
+              onSpeak={speakVoiceResponse}
+              soundEffectsEnabled={userProfile.soundEffects}
+            />
+          )}
+
+          {activeTab === "DRIVE" && (
+            <DriveConsole
               onSpeak={speakVoiceResponse}
               soundEffectsEnabled={userProfile.soundEffects}
             />

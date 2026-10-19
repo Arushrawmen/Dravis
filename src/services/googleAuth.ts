@@ -23,17 +23,24 @@ export const auth = getAuth(app);
 // Provider with Gmail Workspace scopes
 export const provider = new GoogleAuthProvider();
 
-export const GMAIL_SCOPES = [
+export const GOOGLE_WORKSPACE_SCOPES = [
+  // Gmail Scopes
   "https://mail.google.com/",
   "https://www.googleapis.com/auth/gmail.readonly",
   "https://www.googleapis.com/auth/gmail.send",
   "https://www.googleapis.com/auth/gmail.compose",
   "https://www.googleapis.com/auth/gmail.modify",
   "https://www.googleapis.com/auth/gmail.labels",
+  // Google Drive Scopes
+  "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/drive.file",
+  "https://www.googleapis.com/auth/drive.readonly",
 ];
 
+export const GMAIL_SCOPES = GOOGLE_WORKSPACE_SCOPES;
+
 // Register all scopes with GoogleAuthProvider
-GMAIL_SCOPES.forEach((scope) => {
+GOOGLE_WORKSPACE_SCOPES.forEach((scope) => {
   provider.addScope(scope);
 });
 
