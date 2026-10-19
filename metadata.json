@@ -1,0 +1,11 @@
+{
+  "name": "Dravis ASI",
+  "description": "Dravis Autonomous Superintelligence - Advanced Sci-Fi Holographic HUD AI Assistant with Voice STT/TTS, Direct Calling, Real-time Gemini Brain, Reasoning Engine, PC Automation, Memory Bank, and Multimodal Vision Intelligence.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

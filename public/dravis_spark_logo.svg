@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="sparkBg" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#081028" />
+      <stop offset="70%" stop-color="#030712" />
+      <stop offset="100%" stop-color="#010308" />
+    </radialGradient>
+
+    <!-- Warm Luminous Body Gradient (Cyan to Sky Blue with Violet Tint) -->
+    <radialGradient id="sparkBodyGrad" cx="42%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="25%" stop-color="#a5f3fc" />
+      <stop offset="55%" stop-color="#38bdf8" />
+      <stop offset="85%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </radialGradient>
+
+    <!-- Rosy Cheek Blush -->
+    <radialGradient id="blushGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Eye Gradient -->
+    <linearGradient id="eyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+
+    <filter id="luminousGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="14" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="softAmbient" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="28" result="amb" />
+    </filter>
+  </defs>
+
+  <!-- Dark Background -->
+  <rect width="512" height="512" rx="100" fill="url(#sparkBg)" />
+
+  <!-- Soft Ambient Glow behind character -->
+  <ellipse cx="256" cy="270" rx="160" ry="150" fill="#38bdf8" opacity="0.45" filter="url(#softAmbient)" />
+  <ellipse cx="256" cy="250" rx="120" ry="110" fill="#818cf8" opacity="0.35" filter="url(#softAmbient)" />
+
+  <!-- Floating Spark Constellation Particles -->
+  <!-- Top Right Little Spark -->
+  <g transform="translate(390, 130)">
+    <polygon points="0,-18 5,-5 18,0 5,5 0,18 -5,5 -18,0 -5,-5" fill="#bae6fd" filter="url(#luminousGlow)" />
+    <circle cx="0" cy="0" r="3" fill="#ffffff" />
+  </g>
+  <!-- Top Left Tiny Spark -->
+  <g transform="translate(110, 160) scale(0.65)">
+    <polygon points="0,-18 5,-5 18,0 5,5 0,18 -5,5 -18,0 -5,-5" fill="#c4b5fd" filter="url(#luminousGlow)" />
+  </g>
+  <!-- Bottom Right Mini Spark -->
+  <g transform="translate(395, 370) scale(0.55)">
+    <polygon points="0,-18 5,-5 18,0 5,5 0,18 -5,5 -18,0 -5,-5" fill="#67e8f9" filter="url(#luminousGlow)" />
+  </g>
+
+  <!-- Main Spark Character: Luminous Floating Shape with Curving Organic Spikes & Soft Belly -->
+  <g filter="url(#luminousGlow)">
+    <!-- Body Silhouette (Friendly four-lobed plump spark) -->
+    <path d="M 256,90 
+             C 285,175 335,185 415,256 
+             C 335,295 305,355 256,425 
+             C 207,355 177,295 97,256 
+             C 177,185 227,175 256,90 Z" 
+          fill="url(#sparkBodyGrad)" />
+
+    <!-- Specular Highlight Overlay (Top forehead shimmer) -->
+    <ellipse cx="256" cy="180" rx="75" ry="40" fill="#ffffff" opacity="0.4" />
+    <ellipse cx="240" cy="165" rx="35" ry="16" fill="#ffffff" opacity="0.75" />
+
+    <!-- Rosy Happy Cheeks -->
+    <ellipse cx="190" cy="278" rx="22" ry="13" fill="url(#blushGrad)" />
+    <ellipse cx="322" cy="278" rx="22" ry="13" fill="url(#blushGrad)" />
+
+    <!-- Big Adorable Happy Eyes -->
+    <!-- Left Eye -->
+    <g transform="translate(205, 245)">
+      <!-- Eye shape -->
+      <ellipse cx="0" cy="0" rx="14" ry="19" fill="url(#eyeGrad)" />
+      <!-- Specular catchlight big -->
+      <circle cx="-4" cy="-7" r="6" fill="#ffffff" />
+      <!-- Specular catchlight small -->
+      <circle cx="5" cy="6" r="2.5" fill="#ffffff" />
+    </g>
+
+    <!-- Right Eye -->
+    <g transform="translate(307, 245)">
+      <!-- Eye shape -->
+      <ellipse cx="0" cy="0" rx="14" ry="19" fill="url(#eyeGrad)" />
+      <!-- Specular catchlight big -->
+      <circle cx="-4" cy="-7" r="6" fill="#ffffff" />
+      <!-- Specular catchlight small -->
+      <circle cx="5" cy="6" r="2.5" fill="#ffffff" />
+    </g>
+
+    <!-- Cute Smiling Mouth -->
+    <path d="M 240,278 Q 256,298 272,278" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" fill="none" />
+    <!-- Happy Tongue Accent -->
+    <path d="M 246,284 Q 256,295 266,284" fill="#f43f5e" opacity="0.85" />
+
+    <!-- Little Floating Hand Gestures -->
+    <ellipse cx="150" cy="285" rx="14" ry="10" fill="#bae6fd" opacity="0.8" />
+    <ellipse cx="362" cy="285" rx="14" ry="10" fill="#bae6fd" opacity="0.8" />
+  </g>
+</svg>
