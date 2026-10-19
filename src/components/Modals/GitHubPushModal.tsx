@@ -50,7 +50,7 @@ export const GitHubPushModal: React.FC<GitHubPushModalProps> = ({
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
 
   const [repoUrl, setRepoUrl] = useState(() => {
-    return localStorage.getItem("dravis_github_repo_url") || "";
+    return localStorage.getItem("dravis_github_repo_url") || "https://github.com/arushgamer783-pixel/Dravis.git";
   });
   const [token, setToken] = useState(() => {
     return localStorage.getItem("dravis_github_pat") || "";
@@ -223,16 +223,26 @@ git push -u origin main`;
 
         {/* Local Git Status Pill */}
         <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1.5 text-cyan-300">
               <GitBranch className="w-4 h-4" />
               <span>Branch: <strong>{gitStatus?.branch || "main"}</strong></span>
             </div>
             <span className="text-slate-600">|</span>
-            <div className="flex items-center gap-1.5 text-slate-300 truncate max-w-[280px]">
-              <GitCommit className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span className="truncate">{gitStatus?.latestCommit || "Latest code committed"}</span>
+            <div className="flex items-center gap-1.5 text-emerald-400 truncate max-w-[280px]">
+              <GitCommit className="w-4 h-4 shrink-0" />
+              <span className="truncate">{gitStatus?.latestCommit || "Synced with GitHub"}</span>
             </div>
+            <span className="text-slate-600">|</span>
+            <a
+              href="https://github.com/arushgamer783-pixel/Dravis"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:underline flex items-center gap-1"
+            >
+              <span>arushgamer783-pixel/Dravis</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
 
           <button
