@@ -624,25 +624,39 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400/60 font-sans"
               />
-              <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                <span className="text-[10px] text-slate-500">Quick presets:</span>
-                {["Boss", "Arush Sir", "Arush"].map((preset) => (
-                  <button
-                    key={preset}
-                    type="button"
-                    onClick={() => {
-                      if (soundEffectsEnabled) soundEffects.playChirp();
-                      setFormData({ ...formData, name: preset });
-                    }}
-                    className={`text-[10px] px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
-                      formData.name === preset
-                        ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
-                        : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    {preset}
-                  </button>
-                ))}
+              <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                <span className="text-[10px] text-slate-400 font-bold">Honorific Recommendations:</span>
+                {(() => {
+                  const cleanedBase = formData.name
+                    ? formData.name.replace(/\s+(Sir|Boss)$/i, "").trim()
+                    : "";
+                  const candidateBase = cleanedBase || "Master";
+                  const options = [
+                    { label: `+ Sir (${candidateBase} Sir)`, val: `${candidateBase} Sir` },
+                    { label: `+ Boss (${candidateBase} Boss)`, val: `${candidateBase} Boss` },
+                    { label: `Boss`, val: "Boss" },
+                    { label: `Sir`, val: "Sir" },
+                    ...(cleanedBase ? [{ label: `Just ${cleanedBase}`, val: cleanedBase }] : []),
+                  ];
+
+                  return options.map((opt) => (
+                    <button
+                      key={opt.val}
+                      type="button"
+                      onClick={() => {
+                        if (soundEffectsEnabled) soundEffects.playChirp();
+                        setFormData({ ...formData, name: opt.val });
+                      }}
+                      className={`text-[10px] px-2.5 py-1 rounded-lg border font-mono transition-all cursor-pointer ${
+                        formData.name === opt.val
+                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-bold shadow-[0_0_8px_rgba(34,211,238,0.3)]"
+                          : "bg-white/5 border-white/10 text-slate-300 hover:border-cyan-400/50 hover:text-white"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ));
+                })()}
               </div>
             </div>
 

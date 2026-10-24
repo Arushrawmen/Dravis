@@ -3,7 +3,9 @@ import type { Request, Response } from "express";
 import path from "path";
 import fs from "fs";
 import { execSync } from "child_process";
+import crypto from "crypto";
 import dotenv from "dotenv";
+import Razorpay from "razorpay";
 import { GoogleGenAI, GenerateVideosOperation, Modality } from "@google/genai";
 import OpenAI from "openai";
 import { createServer as createViteServer } from "vite";
@@ -5427,6 +5429,394 @@ app.delete("/api/db/records/:id", requireAuth, async (req: AuthRequest, res: Res
       error: err.message || "Failed to delete database record",
     });
   }
+});
+
+// ============================================================================
+// RAZORPAY INTEGRATION & SUBSCRIPTION PLANS
+// ============================================================================
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "rzp_test_TroOWzpPjRxerY";
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "cW50QiZ70e1iL6YzQuKsUCh2";
+const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || "arushgamer783@gmail.com";
+
+let razorpayClient: Razorpay | null = null;
+try {
+  razorpayClient = new Razorpay({
+    key_id: RAZORPAY_KEY_ID,
+    key_secret: RAZORPAY_KEY_SECRET,
+  });
+} catch (err) {
+  console.warn("[Razorpay] Client init warning:", err);
+}
+
+// Subscription Plans (4 tiers: Free up to 100 queries, Starter, Pro, Enterprise)
+const SUBSCRIPTION_PLANS = [
+  {
+    id: "free",
+    name: "Free Explorer",
+    priceInRupees: 0,
+    amountPaise: 0,
+    queryLimit: 100,
+    badge: "FREE",
+    description: "Standard voice & chat queries up to 100 interactions",
+    features: [
+      "Up to 100 Assistant Queries",
+      "Standard Gemini Brain responses",
+      "Holographic 3D Micro-Decision view",
+      "Basic voice STT & TTS",
+    ],
+  },
+  {
+    id: "starter",
+    name: "Starter ASI",
+    priceInRupees: 199,
+    amountPaise: 19900,
+    queryLimit: 5000,
+    badge: "POPULAR",
+    description: "Ideal for active learners & creators",
+    features: [
+      "5,000 High-Speed Queries",
+      "Full PC Automation & Direct Phone Calling",
+      "Persistent Long-Term Memory Bank",
+      "Multi-Agent Network Collaboration",
+    ],
+  },
+  {
+    id: "pro",
+    name: "Pro Hyper-Intelligence",
+    priceInRupees: 499,
+    amountPaise: 49900,
+    queryLimit: 25000,
+    badge: "PRO",
+    description: "For engineers, power users & multi-taskers",
+    features: [
+      "25,000 High-Speed Queries",
+      "Vision AI & Desktop Screen Auto-Fix",
+      "Advanced Reasoning (Thinking Model)",
+      "High-Resolution Image & Video Studio",
+      "Priority API Bandwidth",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Unlimited Master Enterprise",
+    priceInRupees: 999,
+    amountPaise: 99900,
+    queryLimit: 999999,
+    badge: "UNLIMITED",
+    description: "Unlimited Superintelligence access with dedicated bandwidth",
+    features: [
+      "Unlimited Superintelligence Queries",
+      "Zero Rate Limiting",
+      "Full Linux Subsystem & Terminal Access",
+      "Instant 24/7 Dedicated Cloud Compute",
+      "Direct Admin VIP Priority",
+    ],
+  },
+];
+
+// Persistent admin registry for logged-in users, subscription records & notifications
+interface UserRegistryRecord {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  joinedAt: string;
+  lastLoginAt: string;
+  location?: string;
+  device?: string;
+  queryCount: number;
+  planId: string;
+  paidAmount?: number;
+  razorpayPaymentId?: string;
+  verified: boolean;
+}
+
+interface AdminNotificationRecord {
+  id: string;
+  type: "LOGIN" | "SUBSCRIPTION_PAID" | "QUERY_LIMIT_REACHED";
+  recipientEmail: string;
+  userEmail: string;
+  userName: string;
+  message: string;
+  details: Record<string, any>;
+  timestamp: string;
+  read: boolean;
+}
+
+const adminDataFilePath = path.join(process.cwd(), "data", "admin_users_data.json");
+let userRegistry: Record<string, UserRegistryRecord> = {};
+let adminNotifications: AdminNotificationRecord[] = [];
+
+try {
+  const dir = path.dirname(adminDataFilePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (fs.existsSync(adminDataFilePath)) {
+    const raw = JSON.parse(fs.readFileSync(adminDataFilePath, "utf-8"));
+    userRegistry = raw.users || {};
+    adminNotifications = raw.notifications || [];
+  }
+} catch (err) {
+  console.warn("[Admin Data] Failed to load cached admin data:", err);
+}
+
+function persistAdminData() {
+  try {
+    const dir = path.dirname(adminDataFilePath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      adminDataFilePath,
+      JSON.stringify({ users: userRegistry, notifications: adminNotifications }, null, 2),
+      "utf-8"
+    );
+  } catch (err) {
+    console.error("[Admin Data] Save failed:", err);
+  }
+}
+
+// 1. Get Subscription Plans
+app.get("/api/subscriptions/plans", (_req: Request, res: Response) => {
+  return res.json({
+    success: true,
+    plans: SUBSCRIPTION_PLANS,
+    razorpayKeyId: RAZORPAY_KEY_ID,
+  });
+});
+
+// 2. Razorpay: Create Order (Backend Step 1)
+app.post("/api/create-order", async (req: Request, res: Response) => {
+  try {
+    const { amount, currency = "INR", receipt, planId, userEmail, notes } = req.body;
+    let numAmount = Number(amount);
+
+    if (!numAmount || isNaN(numAmount)) {
+      return res.status(400).json({
+        success: false,
+        error: "Validation error: Amount is required.",
+      });
+    }
+
+    // If amount is passed in Rupees (e.g. 199, 499, 999), convert to paise (min 100 paise = ₹1.00)
+    // If it's already in paise (e.g. 19900), keep as is
+    if (numAmount < 1000) {
+      numAmount = Math.round(numAmount * 100);
+    }
+
+    if (numAmount < 100) {
+      return res.status(400).json({
+        success: false,
+        error: "Validation error: Minimum order amount must be at least 100 paise (₹1.00).",
+      });
+    }
+
+    if (!razorpayClient) {
+      razorpayClient = new Razorpay({
+        key_id: RAZORPAY_KEY_ID,
+        key_secret: RAZORPAY_KEY_SECRET,
+      });
+    }
+
+    const orderOptions = {
+      amount: Math.round(numAmount),
+      currency,
+      receipt: receipt || `rec_${Date.now()}`,
+      notes: {
+        planId: planId || "starter",
+        userEmail: userEmail || "guest",
+        ...(notes || {}),
+      },
+    };
+
+    const order = await razorpayClient.orders.create(orderOptions);
+
+    return res.json({
+      success: true,
+      order,
+      order_id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: RAZORPAY_KEY_ID,
+      key_id: RAZORPAY_KEY_ID,
+    });
+  } catch (err: any) {
+    console.error("[API POST /api/create-order] Error creating order:", err);
+    return res.status(500).json({
+      success: false,
+      error: err?.message || "Failed to create Razorpay order",
+    });
+  }
+});
+
+// 3. Razorpay: Verify Payment Signature (Backend Step 3)
+app.post("/api/verify-payment", async (req: Request, res: Response) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      planId = "starter",
+      userEmail,
+      userName,
+    } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required payment fields: razorpay_order_id, razorpay_payment_id, razorpay_signature.",
+      });
+    }
+
+    // Algorithm: HMAC-SHA256(order_id + "|" + payment_id, KEY_SECRET)
+    const bodyToSign = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", RAZORPAY_KEY_SECRET)
+      .update(bodyToSign)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        error: "Signature verification mismatch. Payment could not be validated.",
+      });
+    }
+
+    // Match plan details
+    const chosenPlan = SUBSCRIPTION_PLANS.find((p) => p.id === planId) || SUBSCRIPTION_PLANS[1];
+
+    // Update user record if userEmail provided
+    if (userEmail) {
+      const uKey = userEmail.toLowerCase().trim();
+      const existing: UserRegistryRecord = userRegistry[uKey] || {
+        uid: "usr_" + Date.now(),
+        email: userEmail,
+        displayName: userName || userEmail.split("@")[0],
+        joinedAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        queryCount: 0,
+        planId: "free",
+        verified: true,
+      };
+
+      existing.planId = planId;
+      existing.paidAmount = chosenPlan.priceInRupees;
+      existing.razorpayPaymentId = razorpay_payment_id;
+      userRegistry[uKey] = existing;
+    }
+
+    // Create Admin notification for payment received
+    const payNotification: AdminNotificationRecord = {
+      id: "notif_pay_" + Date.now(),
+      type: "SUBSCRIPTION_PAID",
+      recipientEmail: ADMIN_NOTIFICATION_EMAIL,
+      userEmail: userEmail || "Anonymous",
+      userName: userName || userEmail || "User",
+      message: `User ${userEmail || "Anonymous"} successfully purchased subscription: ${chosenPlan.name} (₹${chosenPlan.priceInRupees})!`,
+      details: {
+        orderId: razorpay_order_id,
+        paymentId: razorpay_payment_id,
+        plan: chosenPlan,
+      },
+      timestamp: new Date().toISOString(),
+      read: false,
+    };
+    adminNotifications.unshift(payNotification);
+    persistAdminData();
+
+    return res.json({
+      success: true,
+      message: "Payment successfully verified and subscription activated!",
+      plan: chosenPlan,
+    });
+  } catch (err: any) {
+    console.error("[API POST /api/verify-payment] Error:", err);
+    return res.status(500).json({
+      success: false,
+      error: err?.message || "Failed to verify Razorpay signature",
+    });
+  }
+});
+
+// 4. Admin Alert on User Login / Registration
+app.post("/api/admin/notify-login", async (req: Request, res: Response) => {
+  try {
+    const { email, displayName, photoURL, location, device, uid } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, error: "Email is required." });
+    }
+
+    const uKey = String(email).toLowerCase().trim();
+    const isNew = !userRegistry[uKey];
+    const nowIso = new Date().toISOString();
+
+    const existingRecord: UserRegistryRecord = userRegistry[uKey] || {
+      uid: uid || "usr_" + Date.now(),
+      email: uKey,
+      displayName: displayName || uKey.split("@")[0],
+      photoURL,
+      joinedAt: nowIso,
+      lastLoginAt: nowIso,
+      location: location || "India / Global",
+      device: device || "Web Workstation",
+      queryCount: 0,
+      planId: "free",
+      verified: true,
+    };
+
+    existingRecord.lastLoginAt = nowIso;
+    if (displayName) existingRecord.displayName = displayName;
+    if (photoURL) existingRecord.photoURL = photoURL;
+    if (location) existingRecord.location = location;
+    if (device) existingRecord.device = device;
+    userRegistry[uKey] = existingRecord;
+
+    const notif: AdminNotificationRecord = {
+      id: "notif_login_" + Date.now(),
+      type: "LOGIN",
+      recipientEmail: ADMIN_NOTIFICATION_EMAIL,
+      userEmail: uKey,
+      userName: existingRecord.displayName,
+      message: `User ${existingRecord.displayName} (${uKey}) signed into Dravis ASI. Device: ${existingRecord.device}. Location: ${existingRecord.location}.`,
+      details: {
+        isNewUser: isNew,
+        user: existingRecord,
+        adminDashboardUrl: `${req.protocol}://${req.get("host")}/#admin`,
+      },
+      timestamp: nowIso,
+      read: false,
+    };
+
+    adminNotifications.unshift(notif);
+    if (adminNotifications.length > 200) adminNotifications.pop();
+    persistAdminData();
+
+    console.log(
+      `[ADMIN NOTIFICATION] To: ${ADMIN_NOTIFICATION_EMAIL} | Subject: User Login: ${uKey} | Msg: ${notif.message}`
+    );
+
+    return res.json({
+      success: true,
+      notified: true,
+      adminEmail: ADMIN_NOTIFICATION_EMAIL,
+      userRecord: existingRecord,
+    });
+  } catch (err: any) {
+    console.error("[API POST /api/admin/notify-login] Error:", err);
+    return res.status(500).json({
+      success: false,
+      error: err?.message || "Failed to record login notification",
+    });
+  }
+});
+
+// 5. Admin Data Dashboard Endpoint
+app.get("/api/admin/users", (_req: Request, res: Response) => {
+  return res.json({
+    success: true,
+    adminEmail: ADMIN_NOTIFICATION_EMAIL,
+    totalUsers: Object.keys(userRegistry).length,
+    users: Object.values(userRegistry),
+    notifications: adminNotifications.slice(0, 50),
+    plans: SUBSCRIPTION_PLANS,
+  });
 });
 
 // Google AdSense direct crawler verification for ads.txt

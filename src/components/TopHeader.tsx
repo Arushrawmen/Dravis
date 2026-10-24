@@ -26,6 +26,8 @@ import {
   MicOff,
   Terminal,
   RotateCcw,
+  Crown,
+  CreditCard,
 } from "lucide-react";
 import { soundEffects } from "../utils/audioSynth";
 import { DRAVIS_LANGUAGES } from "../types";
@@ -49,6 +51,7 @@ interface TopHeaderProps {
   onMinimize?: () => void;
   onClose?: () => void;
   onOpenContacts?: () => void;
+  onOpenSubscriptions?: () => void;
   onToggleAndroidResolution?: () => void;
   isAndroidResolutionActive?: boolean;
   onOpenGitHubModal?: () => void;
@@ -75,6 +78,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onMinimize,
   onClose,
   onOpenContacts,
+  onOpenSubscriptions,
   onToggleAndroidResolution,
   isAndroidResolutionActive = false,
   onOpenGitHubModal,
@@ -542,6 +546,23 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                   title="Contacts & Direct Calling Hub"
                 >
                   <Phone className="w-4 h-4 text-emerald-400" />
+                </button>
+              )}
+
+              {/* 9.5 Razorpay Subscriptions & Upgrade Button */}
+              {onOpenSubscriptions && (
+                <button
+                  id="hud-btn-subscriptions"
+                  type="button"
+                  onClick={() => {
+                    if (soundEffectsEnabled) soundEffects.playActivatePulse();
+                    onOpenSubscriptions();
+                  }}
+                  className="px-2.5 py-1 rounded-xl border border-amber-400/50 bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-violet-500/20 hover:from-amber-500/30 hover:to-violet-500/30 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.25)] flex items-center gap-1.5 font-mono text-[11px] font-bold cursor-pointer transition-all active:scale-95"
+                  title="Subscription Plans & Upgrades (Razorpay Verified)"
+                >
+                  <Crown className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="hidden sm:inline">Plans</span>
                 </button>
               )}
 

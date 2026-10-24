@@ -83,7 +83,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const token = await getFirebaseIdToken(result.user);
       setIdToken(token);
     } catch (err: any) {
-      console.error("Firebase Sign-In error:", err);
+      const code = err?.code || "";
+      if (
+        code === "auth/popup-closed-by-user" ||
+        code === "auth/cancelled-popup-request" ||
+        code === "auth/popup-blocked"
+      ) {
+        console.info("[AuthContext] Google Sign-In popup closed or cancelled by user.");
+      } else {
+        console.error("Firebase Sign-In error:", err);
+      }
       throw err;
     }
   }, []);

@@ -27,6 +27,7 @@
     "motion": "^12.23.24",
     "openai": "^7.5.0",
     "pg": "^8.23.1",
+    "razorpay": "^2.9.8",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "smiles-drawer": "^2.4.1",

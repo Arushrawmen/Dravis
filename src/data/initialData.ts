@@ -22,7 +22,7 @@ import {
 } from "../types";
 
 export const INITIAL_USER_PROFILE: UserProfile = {
-  name: "Arush Sir",
+  name: "Master",
   title: "Chief Architect & Master",
   biometricId: "ASI-9942-ALPHA",
   securityLevel: "LEVEL-5 EXECUTIVE",
@@ -646,8 +646,8 @@ export function buildDefaultAccountWorkspace(
       accountId: account.id,
       userProfile: {
         ...INITIAL_USER_PROFILE,
-        name: account.displayName || "Arush Sir",
-        title: account.roleTitle || "Chief Architect & Master",
+        name: account.displayName || "Boss",
+        title: account.roleTitle || "Authorized Operator",
       },
       messages: INITIAL_MESSAGES,
       memories: INITIAL_MEMORIES,

@@ -564,6 +564,7 @@ export const MicroDecisionView: React.FC<MicroDecisionViewProps> = ({
         const sx = cx + rx * scale;
         const sy = cy + ry * scale;
 
+        // Celestial planets removed per user request - clean galaxy nebula and vibrant decision balls only
         projectedSectors.push({
           sectorId: sInfo.sectorId,
           name: sInfo.name,
@@ -574,45 +575,6 @@ export const MicroDecisionView: React.FC<MicroDecisionViewProps> = ({
           z: rz,
           scale,
         });
-
-        // 3D Spherical Planet with realistic lighting, equatorial orbit ring and atmosphere
-        const planetR = Math.max(16, sInfo.radius * scale * Math.max(0.4, Math.min(2.4, Math.pow(currentZoom, 0.42))));
-        const pSpecX = sx - planetR * 0.35;
-        const pSpecY = sy - planetR * 0.35;
-        const planetGrad = ctx.createRadialGradient(pSpecX, pSpecY, Math.max(1, planetR * 0.12), sx, sy, planetR);
-        planetGrad.addColorStop(0, "#ffffff");
-        planetGrad.addColorStop(0.24, sInfo.accentColor);
-        planetGrad.addColorStop(0.78, sInfo.accentColor);
-        planetGrad.addColorStop(1, "rgba(2, 6, 23, 0.95)");
-
-        ctx.fillStyle = planetGrad;
-        ctx.beginPath();
-        ctx.arc(sx, sy, planetR, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Atmospheric glowing aura
-        const atmoGrad = ctx.createRadialGradient(sx, sy, planetR * 0.75, sx, sy, planetR * 1.55);
-        atmoGrad.addColorStop(0, `${sInfo.accentColor}44`);
-        atmoGrad.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = atmoGrad;
-        ctx.beginPath();
-        ctx.arc(sx, sy, planetR * 1.55, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Celestial orbital ring around planet
-        ctx.strokeStyle = `${sInfo.accentColor}55`;
-        ctx.lineWidth = Math.max(1, 1.4 * scale);
-        ctx.beginPath();
-        ctx.ellipse(sx, sy, planetR * 1.75, planetR * 0.48, 0.28, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Planet Name Banner
-        const pFont = Math.max(9, Math.min(16, Math.round(11 * scale)));
-        ctx.font = `bold ${pFont}px monospace`;
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.fillText(sInfo.name, sx, sy - planetR - 8);
-        ctx.textAlign = "left";
       }
       projectedSectorsRef.current = projectedSectors;
 
@@ -630,9 +592,9 @@ export const MicroDecisionView: React.FC<MicroDecisionViewProps> = ({
         const scale = Math.max(0.04, fov / Math.max(25, fov + rz + 320));
         const x2d = cx + rx * scale;
         const y2d = cy + ry * scale;
-        const zoomSizeFactor = Math.max(0.35, Math.min(3.5, Math.pow(currentZoom, 0.42)));
+        const zoomSizeFactor = Math.max(0.1, Math.min(3.5, Math.pow(currentZoom, 0.42)));
         const baseR = item.isUserLeader || item.isDravisCore ? 18 : 13.5;
-        const drawR = Math.max(2.5, baseR * scale * zoomSizeFactor);
+        const drawR = Math.max(1.5, baseR * scale * zoomSizeFactor);
         const ballColor =
           item.isUserLeader
             ? "#38bdf8"
@@ -833,26 +795,29 @@ export const MicroDecisionView: React.FC<MicroDecisionViewProps> = ({
       const h = rect.height;
 
       const oldZoom = zoomRef.current;
-      const delta = Math.max(-120, Math.min(120, e.deltaY));
-      const factor = Math.pow(1.0028, -delta);
-      const nextZoom = Math.max(0.0005, Math.min(150.0, Number((oldZoom * factor).toFixed(5))));
-      const k = nextZoom / Math.max(0.00001, oldZoom);
+      // Scroll up (deltaY < 0) = zoom in, scroll down (deltaY > 0) = zoom out
+      const zoomFactor = e.deltaY < 0 ? 1.15 : 0.86;
+      const nextZoom = Math.max(0.015, Math.min(80.0, Number((oldZoom * zoomFactor).toFixed(5))));
+      const k = nextZoom / oldZoom;
 
       const dx = mx - w * 0.5;
       const dy = my - h * 0.5;
 
-      camPanRef.current.targetX = dx * (1 - k) + camPanRef.current.targetX * k;
-      camPanRef.current.targetY = dy * (1 - k) + camPanRef.current.targetY * k;
-      camPanRef.current.x = camPanRef.current.targetX;
-      camPanRef.current.y = camPanRef.current.targetY;
+      const newPanX = dx * (1 - k) + camPanRef.current.x * k;
+      const newPanY = dy * (1 - k) + camPanRef.current.y * k;
+
+      camPanRef.current.targetX = newPanX;
+      camPanRef.current.targetY = newPanY;
+      camPanRef.current.x = newPanX;
+      camPanRef.current.y = newPanY;
 
       setZoom(nextZoom);
       zoomRef.current = nextZoom;
 
       setCamCoordHud((prev) => ({
         ...prev,
-        x: Math.round(camPanRef.current.targetX),
-        y: Math.round(camPanRef.current.targetY),
+        x: Math.round(newPanX),
+        y: Math.round(newPanY),
       }));
     };
 
@@ -1561,52 +1526,6 @@ if __name__ == "__main__":
                     <span>{clickActions.rightLabel}</span>
                   </button>
                 </div>
-
-                {/* Quick Planet Jump Pills & Rename Planet Control */}
-                {subView === "SPHERE_360_3D" && (
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    <span className="text-slate-400 mr-1 flex items-center gap-1">
-                      <Globe className="w-3 h-3 text-cyan-400" />
-                      <span>Planets:</span>
-                    </span>
-                    {Array.from({ length: Math.min(8, totalSectorsCount) }).map((_, sIdx) => {
-                      const pName = getPlanetName(sIdx);
-                      return (
-                        <button
-                          key={sIdx}
-                          type="button"
-                          onClick={() => flyCameraToSector(sIdx)}
-                          className={`px-2.5 py-0.5 rounded-lg border cursor-pointer font-bold transition-all text-[10px] ${
-                            camCoordHud.sector === sIdx
-                              ? "bg-cyan-400 text-slate-950 border-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.4)]"
-                              : "bg-black/60 border-white/15 text-slate-300 hover:border-cyan-400"
-                          }`}
-                          title={`Fly to ${pName}`}
-                        >
-                          {pName.split("•")[0]?.trim() || `Planet ${sIdx + 1}`}
-                        </button>
-                      );
-                    })}
-
-                    {/* Dedicated Rename Planet Button */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const curId = camCoordHud.sector || 0;
-                        setRenamePlanetModal({
-                          open: true,
-                          planetId: curId,
-                          nameInput: getPlanetName(curId),
-                        });
-                      }}
-                      className="px-2.5 py-0.5 rounded-lg bg-purple-500/25 hover:bg-purple-500/40 text-purple-200 border border-purple-400/50 cursor-pointer font-bold flex items-center gap-1 transition-all"
-                      title="Rename the current or any Planet"
-                    >
-                      <Sparkles className="w-3 h-3 text-purple-300" />
-                      <span>Rename Planet</span>
-                    </button>
-                  </div>
-                )}
               </div>
 
               {/* Expandable "OPTIONS & TOOLS" Drawer */}

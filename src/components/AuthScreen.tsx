@@ -60,6 +60,16 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // Guarantee ZERO hardcoded demo emails are ever displayed or recommended
+  const sanitizedSavedAccounts = savedAccounts.filter(
+    (acc) =>
+      acc &&
+      acc.email &&
+      !acc.email.toLowerCase().includes("arushgamer") &&
+      !acc.email.toLowerCase().includes("arush.studio") &&
+      !acc.email.toLowerCase().includes("demo")
+  );
+
   const handleSelectSavedAccount = (acc: UserAccount) => {
     setErrorMsg(null);
     setIsLoading(true);
@@ -171,13 +181,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         await authContext.signInWithGoogle();
         authenticatedUser = auth.currentUser;
       } catch (err: any) {
-        console.warn("[AuthScreen] Firebase Sign-In popup closed or error:", err);
         setIsLoading(false);
+        const code = err?.code || "";
         const msg = String(err?.message || err || "");
-        if (msg.includes("popup-closed-by-user") || msg.includes("cancelled")) {
-          setErrorMsg("Google Sign-In popup was closed. Please try again or sign in with your email.");
+        if (
+          code === "auth/popup-closed-by-user" ||
+          code === "auth/cancelled-popup-request" ||
+          msg.includes("popup-closed-by-user") ||
+          msg.includes("cancelled")
+        ) {
+          setErrorMsg("Google Sign-In was closed. Click 'Sign in with Google' to try again or enter your email below.");
+        } else if (code === "auth/popup-blocked" || msg.includes("popup-blocked")) {
+          setErrorMsg("Pop-up was blocked by your browser. Please allow pop-ups or use email sign-in below.");
         } else {
-          setErrorMsg(err?.message || "Google Sign-In failed. Please try again or enter your email below.");
+          console.warn("[AuthScreen] Google Sign-In error:", err?.message || err);
+          setErrorMsg(err?.message || "Google Sign-In could not be completed. Please try again or use email sign-in.");
         }
         return;
       }
@@ -300,7 +318,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         className={`relative z-10 w-full ${
           isAndroidResolutionActive
             ? "max-w-[400px] rounded-[42px] bg-slate-950/85 border border-white/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(34,211,238,0.18)]"
-            : savedAccounts.length > 0
+            : sanitizedSavedAccounts.length > 0
             ? "max-w-[880px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
             : "max-w-[460px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-7 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
         } backdrop-blur-2xl flex flex-col gap-5`}
@@ -316,7 +334,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
         <div
           className={
-            isAndroidResolutionActive || savedAccounts.length === 0
+            isAndroidResolutionActive || sanitizedSavedAccounts.length === 0
               ? "flex flex-col gap-5"
               : "grid grid-cols-1 md:grid-cols-12 gap-6 items-start"
           }
@@ -324,7 +342,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
           {/* LEFT / TOP COLUMN: Brand Identity + Saved Accounts Quick Switcher (if any saved accounts exist) */}
           <div
             className={
-              isAndroidResolutionActive || savedAccounts.length === 0
+              isAndroidResolutionActive || sanitizedSavedAccounts.length === 0
                 ? "flex flex-col gap-4"
                 : "md:col-span-5 flex flex-col gap-5 md:border-r md:border-white/10 md:pr-6"
             }
@@ -353,12 +371,12 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
             </div>
 
             {/* Saved Accounts List with Direct "Switch" Button Next to Account Name */}
-            {savedAccounts.length > 0 && (
+            {sanitizedSavedAccounts.length > 0 && (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-[11px] font-mono font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
                     <UserCheck className="w-3.5 h-3.5" />
-                    <span>Saved Accounts ({savedAccounts.length})</span>
+                    <span>Saved Accounts ({sanitizedSavedAccounts.length})</span>
                   </span>
                   <span className="text-[10px] font-mono text-slate-400">
                     1-Click Switch
@@ -366,7 +384,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                 </div>
 
                 <div className="flex flex-col gap-2 max-h-56 overflow-y-auto pr-0.5">
-                  {savedAccounts.map((acc) => {
+                  {sanitizedSavedAccounts.map((acc) => {
                     const counts = accountHistoryCounts[acc.id] || {
                       chats: 3,
                       memories: 2,
@@ -424,7 +442,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
           </div>
 
           {/* RIGHT / MAIN COLUMN: Clean Login & Google Auth */}
-          <div className={isAndroidResolutionActive || savedAccounts.length === 0 ? "flex flex-col gap-4" : "md:col-span-7 flex flex-col gap-4"}>
+          <div className={isAndroidResolutionActive || sanitizedSavedAccounts.length === 0 ? "flex flex-col gap-4" : "md:col-span-7 flex flex-col gap-4"}>
             {/* Status Notification Alerts */}
             <AnimatePresence>
               {errorMsg && (

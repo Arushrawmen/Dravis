@@ -94,11 +94,11 @@ export function getPlanetName(planetId: number): string {
  * Arranges planets in a majestic 3D celestial orbit system.
  */
 export function getPlanetCenter3D(planetId: number, baseRadius: number): PlanetInfo {
-  const r = Math.max(140, baseRadius);
+  const r = Math.max(2, baseRadius);
   const accentColor = PLANET_COLORS[Math.abs(planetId) % PLANET_COLORS.length];
   const name = getPlanetName(planetId);
   const theme = DEFAULT_PLANET_NAMES[planetId]?.theme || "COSMOS";
-  const planetRadius = Math.max(34, r * 0.32);
+  const planetRadius = Math.max(2, r * 0.32);
 
   if (planetId <= 0) {
     return {

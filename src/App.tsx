@@ -50,6 +50,7 @@ import { ContactsModal } from "./components/Modals/ContactsModal";
 import { ActiveAppWindowModal } from "./components/Modals/ActiveAppWindowModal";
 import { GitHubPushModal } from "./components/Modals/GitHubPushModal";
 import { AndroidCliModal } from "./components/Modals/AndroidCliModal";
+import { SubscriptionModal } from "./components/Modals/SubscriptionModal";
 import { screenMonitorAgent } from "./utils/screenMonitorAgent";
 
 // Data & Utilities
@@ -151,10 +152,21 @@ function DravisApp() {
       const saved = localStorage.getItem("dravis_saved_accounts_v2");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) {
+          // Strictly scrub any hardcoded demo or personal emails
+          const valid = parsed.filter(
+            (acc: any) =>
+              acc &&
+              acc.email &&
+              !acc.email.toLowerCase().includes("arushgamer") &&
+              !acc.email.toLowerCase().includes("arush.studio") &&
+              !acc.email.toLowerCase().includes("demo")
+          );
+          if (valid.length > 0) return valid;
+        }
       }
     } catch {}
-    return INITIAL_SAVED_ACCOUNTS;
+    return [];
   });
 
   const [accountWorkspaces, setAccountWorkspaces] = useState<Record<string, AccountWorkspaceData>>(
@@ -166,11 +178,7 @@ function DravisApp() {
           if (parsed && typeof parsed === "object") return parsed;
         }
       } catch {}
-      const initialMap: Record<string, AccountWorkspaceData> = {};
-      INITIAL_SAVED_ACCOUNTS.forEach((acc) => {
-        initialMap[acc.id] = buildDefaultAccountWorkspace(acc);
-      });
-      return initialMap;
+      return {};
     }
   );
 
@@ -178,11 +186,25 @@ function DravisApp() {
     const saved = localStorage.getItem("dravis_account");
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (
+          parsed &&
+          parsed.email &&
+          (parsed.email.toLowerCase().includes("arushgamer") ||
+            parsed.email.toLowerCase().includes("arush.studio") ||
+            parsed.email.toLowerCase().includes("demo"))
+        ) {
+          localStorage.removeItem("dravis_account");
+          return null;
+        }
+        return parsed;
       } catch {}
     }
-    return INITIAL_USER_ACCOUNT;
+    return null;
   });
+
+  // Razorpay Subscriptions Modal State
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState<boolean>(false);
 
   // Navigation & View State
   const [activeTab, setActiveTab] = useState<NavigationTab>("HOME");
@@ -5167,6 +5189,22 @@ function DravisApp() {
     speakVoiceResponse(
       `Switched active account to ${activatedAcc.displayName}. All personal chat history, memories, projects, and workspace files for ${activatedAcc.displayName} are now loaded.`
     );
+
+    // 5. Dispatch real-time admin login notification to arushgamer783@gmail.com
+    if (activatedAcc.email) {
+      void fetch("/api/admin/notify-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: activatedAcc.email,
+          displayName: activatedAcc.displayName,
+          photoURL: activatedAcc.avatarUrl,
+          device: isAndroidResolutionActive ? "Android Phone (Liquid Glass)" : "Desktop Workstation (Windows 11 / Web)",
+          location: Intl.DateTimeFormat().resolvedOptions().timeZone || "India / Global",
+          uid: activatedAcc.id,
+        }),
+      }).catch((err) => console.warn("[Admin Notification Error]", err));
+    }
   };
 
   // Add New Account Handler (from Profile or Android Settings)
@@ -5637,6 +5675,7 @@ function DravisApp() {
             }}
             onClose={() => setIsShutdownOpen(true)}
             onOpenContacts={() => setIsContactsModalOpen(true)}
+            onOpenSubscriptions={() => setIsSubscriptionModalOpen(true)}
             onToggleAndroidResolution={() => setIsAndroidResolutionActive((prev) => !prev)}
             isAndroidResolutionActive={isAndroidResolutionActive}
             onOpenGitHubModal={() => setIsGitHubModalOpen(true)}
@@ -6214,6 +6253,20 @@ function DravisApp() {
       <VirtualCursorOverlay
         currentAction={activeVirtualCursorAction}
         onActionComplete={() => setActiveVirtualCursorAction(null)}
+      />
+
+      {/* 10. RAZORPAY STANDARD CHECKOUT SUBSCRIPTION MODAL */}
+      <SubscriptionModal
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+        userEmail={userAccount?.email || ""}
+        userName={userAccount?.displayName || userProfile.name}
+        currentPlanId="free"
+        onPaymentSuccess={(plan, paymentId) => {
+          speakVoiceResponse(
+            `Subscription activated! You are now subscribed to the ${plan.name} plan on Razorpay. Reference: ${paymentId.slice(0, 8)}.`
+          );
+        }}
       />
     </div>
   );
