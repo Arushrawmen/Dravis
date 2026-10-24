@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import { UserAccount } from "../types";
 import { soundEffects } from "../utils/audioSynth";
+import { useAuth } from "../context/AuthContext";
+import { auth } from "../lib/firebase";
 import dravisSparkLogo from "../assets/images/dravis_spark_logo_1789562293560.jpg";
 
 interface AuthScreenProps {
@@ -49,11 +51,11 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   accountHistoryCounts = {},
 }) => {
   const [authMode, setAuthMode] = useState<"LOGIN" | "SIGNUP" | "RESET">("LOGIN");
-  const [email, setEmail] = useState(currentUser?.email || "arushgamer783@gmail.com");
-  const [password, setPassword] = useState("••••••••••••");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [displayName, setDisplayName] = useState(currentUser?.displayName || "Arush Sir");
-  const [roleTitle, setRoleTitle] = useState(currentUser?.roleTitle || "Chief Architect & Master");
+  const [displayName, setDisplayName] = useState("");
+  const [roleTitle, setRoleTitle] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
     setErrorMsg(null);
     setIsLoading(true);
     soundEffects.playActivatePulse();
-    setSuccessMsg(`Switching to ${acc.displayName} (${acc.email}) & loading account history...`);
+    setSuccessMsg(`Switching to ${acc.displayName} (${acc.email})...`);
 
     setTimeout(() => {
       setIsLoading(false);
@@ -77,7 +79,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      setErrorMsg("Please enter a valid email address.");
+      setErrorMsg("Please enter your email address.");
       return;
     }
 
@@ -96,7 +98,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
           isLoggedIn: true,
           lastLogin: "Active Now",
         };
-        setSuccessMsg(`Welcome back, ${existing.displayName}. Loading your personal history...`);
+        setSuccessMsg(`Welcome back, ${existing.displayName}. Loading workspace...`);
         setTimeout(() => {
           onAuthenticate(updatedExisting, false);
         }, 400);
@@ -106,7 +108,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       const namePart =
         authMode === "SIGNUP"
           ? displayName.trim() || email.split("@")[0] || "User"
-          : existing?.displayName || displayName.trim() || email.split("@")[0] || "Arush Sir";
+          : existing?.displayName || displayName.trim() || email.split("@")[0] || "User";
 
       const authenticatedAccount: UserAccount = {
         id: existing?.id || "usr-" + Date.now(),
@@ -115,7 +117,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         roleTitle:
           authMode === "SIGNUP"
             ? roleTitle.trim() || "Authorized Operator"
-            : existing?.roleTitle || "Chief Architect & Master",
+            : existing?.roleTitle || "Authorized Master",
         provider: "EMAIL",
         avatarUrl:
           existing?.avatarUrl ||
@@ -140,61 +142,104 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
       setSuccessMsg(
         authMode === "SIGNUP"
-          ? `Account created for ${namePart}. Initializing clean history & workspace...`
+          ? `Account created for ${namePart}. Loading workspace...`
           : `Authenticated as ${namePart}. Loading DRAVIS...`
       );
       setTimeout(() => {
         onAuthenticate(authenticatedAccount, authMode === "SIGNUP" || !existing);
       }, 450);
-    }, 600);
+    }, 500);
   };
 
-  const handleGoogleAuth = () => {
+  const authContext = (() => {
+    try {
+      return useAuth();
+    } catch {
+      return null;
+    }
+  })();
+
+  const handleGoogleAuth = async () => {
     setIsLoading(true);
     setErrorMsg(null);
     soundEffects.playActivatePulse();
 
-    setTimeout(() => {
+    let authenticatedUser: any = null;
+
+    if (authContext?.signInWithGoogle) {
+      try {
+        await authContext.signInWithGoogle();
+        authenticatedUser = auth.currentUser;
+      } catch (err: any) {
+        console.warn("[AuthScreen] Firebase Sign-In popup closed or error:", err);
+        setIsLoading(false);
+        const msg = String(err?.message || err || "");
+        if (msg.includes("popup-closed-by-user") || msg.includes("cancelled")) {
+          setErrorMsg("Google Sign-In popup was closed. Please try again or sign in with your email.");
+        } else {
+          setErrorMsg(err?.message || "Google Sign-In failed. Please try again or enter your email below.");
+        }
+        return;
+      }
+    } else {
+      authenticatedUser = auth.currentUser;
+    }
+
+    if (!authenticatedUser || !authenticatedUser.email) {
       setIsLoading(false);
-      const existingGoogle = savedAccounts.find(
-        (a) => a.email.toLowerCase() === "arushgamer783@gmail.com"
-      );
-      const googleAccount: UserAccount = existingGoogle
-        ? {
-            ...existingGoogle,
-            isLoggedIn: true,
-            lastLogin: "Just Now via Google OAuth",
-          }
-        : {
-            id: "usr-arush-9942",
-            email: "arushgamer783@gmail.com",
-            displayName: "Arush Sir",
-            roleTitle: "Chief Architect & Master",
-            provider: "GOOGLE",
-            avatarUrl:
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-            createdAt: new Date().toISOString(),
-            lastLogin: "Just Now via Google OAuth",
-            isLoggedIn: true,
-            isSupervised: false,
-            sessions: [
-              {
-                id: "sess-google-" + Date.now(),
-                device: isAndroidResolutionActive
-                  ? "Android Companion (Google Verified)"
-                  : "Workstation (Google Verified)",
-                ip: "192.168.1.104",
-                location: "Google Secure Identity",
-                lastActive: "Active Now",
-                isCurrent: true,
-              },
-            ],
-          };
-      setSuccessMsg("Google account verified. Loading Arush Sir's workspace & history...");
-      setTimeout(() => {
-        onAuthenticate(googleAccount, false);
-      }, 450);
-    }, 550);
+      setErrorMsg("No Google account verified. Please choose your Google account to sign in.");
+      return;
+    }
+
+    const emailToUse = authenticatedUser.email;
+    const displayNameToUse = authenticatedUser.displayName || emailToUse.split("@")[0] || "User";
+    const photoToUse =
+      authenticatedUser.photoURL ||
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+    const uidToUse = authenticatedUser.uid || "usr-" + Date.now();
+
+    const existingGoogle = savedAccounts.find(
+      (a) => a.email.toLowerCase() === emailToUse.toLowerCase()
+    );
+
+    const googleAccount: UserAccount = existingGoogle
+      ? {
+          ...existingGoogle,
+          displayName: displayNameToUse,
+          avatarUrl: photoToUse,
+          isLoggedIn: true,
+          lastLogin: "Active Now via Google Auth",
+        }
+      : {
+          id: uidToUse,
+          email: emailToUse,
+          displayName: displayNameToUse,
+          roleTitle: "Authorized Master",
+          provider: "GOOGLE",
+          avatarUrl: photoToUse,
+          createdAt: new Date().toISOString(),
+          lastLogin: "Active Now via Google Auth",
+          isLoggedIn: true,
+          isSupervised: false,
+          sessions: [
+            {
+              id: "sess-google-" + Date.now(),
+              device: isAndroidResolutionActive
+                ? "Android Companion (Google Verified)"
+                : "Workstation (Google Verified)",
+              ip: "192.168.1.104",
+              location: "Google Secure Identity",
+              lastActive: "Active Now",
+              isCurrent: true,
+            },
+          ],
+        };
+
+    setIsLoading(false);
+    setSuccessMsg(`Google account verified (${emailToUse}). Loading workspace...`);
+    setTimeout(() => {
+      onAuthenticate(googleAccount, false);
+    }, 450);
   };
 
   return (
@@ -255,7 +300,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         className={`relative z-10 w-full ${
           isAndroidResolutionActive
             ? "max-w-[400px] rounded-[42px] bg-slate-950/85 border border-white/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(34,211,238,0.18)]"
-            : "max-w-[880px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
+            : savedAccounts.length > 0
+            ? "max-w-[880px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
+            : "max-w-[460px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-7 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
         } backdrop-blur-2xl flex flex-col gap-5`}
       >
         {/* Android Status Notch Bar (Only in Android Version) */}
@@ -269,20 +316,20 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
 
         <div
           className={
-            isAndroidResolutionActive
+            isAndroidResolutionActive || savedAccounts.length === 0
               ? "flex flex-col gap-5"
               : "grid grid-cols-1 md:grid-cols-12 gap-6 items-start"
           }
         >
-          {/* LEFT / TOP COLUMN: Brand Identity + Saved Accounts Quick Switcher */}
+          {/* LEFT / TOP COLUMN: Brand Identity + Saved Accounts Quick Switcher (if any saved accounts exist) */}
           <div
             className={
-              isAndroidResolutionActive
+              isAndroidResolutionActive || savedAccounts.length === 0
                 ? "flex flex-col gap-4"
                 : "md:col-span-5 flex flex-col gap-5 md:border-r md:border-white/10 md:pr-6"
             }
           >
-            {/* Glowing Cute Dravis Avatar & Header */}
+            {/* Glowing Dravis Avatar & Header */}
             <div className="flex flex-col items-center text-center gap-2.5">
               <div className="relative w-20 h-20 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-400/35 via-sky-400/20 to-amber-400/35 blur-xl animate-pulse" />
@@ -299,8 +346,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                 </h1>
                 <p className="text-xs text-slate-400 mt-0.5">
                   {isAndroidResolutionActive
-                    ? "Android Liquid Glass Edition • Sign in or switch account"
-                    : "Desktop Workstation OS • Sign in or switch your account"}
+                    ? "Android Liquid Glass Edition • Sign in with your account"
+                    : "Desktop Workstation OS • Sign in with your account"}
                 </p>
               </div>
             </div>
@@ -321,9 +368,9 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                 <div className="flex flex-col gap-2 max-h-56 overflow-y-auto pr-0.5">
                   {savedAccounts.map((acc) => {
                     const counts = accountHistoryCounts[acc.id] || {
-                      chats: acc.id === "usr-arush-9942" ? 4 : 3,
-                      memories: acc.id === "usr-arush-9942" ? 6 : 2,
-                      logs: acc.id === "usr-arush-9942" ? 3 : 2,
+                      chats: 3,
+                      memories: 2,
+                      logs: 2,
                     };
                     return (
                       <div
@@ -376,8 +423,71 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
             )}
           </div>
 
-          {/* RIGHT / BOTTOM COLUMN: Clean Login / Add Account Form */}
-          <div className={isAndroidResolutionActive ? "flex flex-col gap-4" : "md:col-span-7 flex flex-col gap-4"}>
+          {/* RIGHT / MAIN COLUMN: Clean Login & Google Auth */}
+          <div className={isAndroidResolutionActive || savedAccounts.length === 0 ? "flex flex-col gap-4" : "md:col-span-7 flex flex-col gap-4"}>
+            {/* Status Notification Alerts */}
+            <AnimatePresence>
+              {errorMsg && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center gap-2 p-3 rounded-xl bg-red-500/15 border border-red-500/35 text-red-200 text-xs font-mono"
+                >
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>{errorMsg}</span>
+                </motion.div>
+              )}
+
+              {successMsg && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-200 text-xs font-mono"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{successMsg}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* 1. PRIMARY ONE-CLICK GOOGLE / GMAIL LOGIN BUTTON */}
+            <button
+              type="button"
+              onClick={handleGoogleAuth}
+              disabled={isLoading}
+              className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-sm flex items-center justify-center gap-3 shadow-[0_0_24px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all cursor-pointer active:scale-[0.99] border border-white"
+            >
+              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                <path
+                  fill="#EA4335"
+                  d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
+                />
+                <path
+                  fill="#4285F4"
+                  d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 14.5s.7 4.8 1.9 7.2l3.7-2.9z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 17C3.7 20.7 7.5 24 12 24z"
+                />
+              </svg>
+              <span className="tracking-wide">Sign in with Google</span>
+            </button>
+
+            {/* Clean Divider */}
+            <div className="relative flex items-center justify-center my-0.5">
+              <div className="w-full border-t border-white/10" />
+              <span className="absolute px-3 bg-slate-950 text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+                OR SIGN IN WITH EMAIL
+              </span>
+            </div>
+
             {/* Mode Switcher Tabs: Sign In vs Add Account */}
             <div className="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-900/90 border border-white/10">
               <button
@@ -417,34 +527,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
               </button>
             </div>
 
-            {/* Status Notification Alerts */}
-            <AnimatePresence>
-              {errorMsg && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-2 p-3 rounded-xl bg-red-500/15 border border-red-500/35 text-red-200 text-xs font-mono"
-                >
-                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                  <span>{errorMsg}</span>
-                </motion.div>
-              )}
-
-              {successMsg && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-200 text-xs font-mono"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>{successMsg}</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Primary Login / Create Account Form */}
+            {/* Primary Email / Password Form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
               {authMode === "SIGNUP" && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -456,7 +539,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder="e.g. Aryan Sharma"
+                      placeholder="e.g. Your Name"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 focus:border-cyan-400 focus:outline-none text-white text-sm"
                       required
                     />
@@ -469,7 +552,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                       type="text"
                       value={roleTitle}
                       onChange={(e) => setRoleTitle(e.target.value)}
-                      placeholder="e.g. Creator & Engineer"
+                      placeholder="e.g. Master & Creator"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 focus:border-cyan-400 focus:outline-none text-white text-sm"
                     />
                   </div>
@@ -485,7 +568,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="arushgamer783@gmail.com"
+                    placeholder="Enter your email address"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 focus:border-cyan-400 focus:outline-none text-white text-sm pl-9"
                     required
                   />
@@ -528,8 +611,8 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                 </div>
               )}
 
-              {/* Primary Action Buttons */}
-              <div className="flex flex-col gap-2.5 mt-1">
+              {/* Submit Button */}
+              <div className="flex flex-col gap-2 mt-1">
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -541,7 +624,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                     <>
                       <span>
                         {authMode === "LOGIN"
-                          ? "Sign In to DRAVIS"
+                          ? "Sign In with Email"
                           : authMode === "SIGNUP"
                           ? "Create & Switch to Account"
                           : "Send Reset Link"}
@@ -549,33 +632,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleGoogleAuth}
-                  disabled={isLoading}
-                  className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-medium text-xs flex items-center justify-center gap-2.5 transition-all cursor-pointer"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24">
-                    <path
-                      fill="#EA4335"
-                      d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
-                    />
-                    <path
-                      fill="#4285F4"
-                      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 14.5s.7 4.8 1.9 7.2l3.7-2.9z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 17C3.7 20.7 7.5 24 12 24z"
-                    />
-                  </svg>
-                  <span>Continue with Google (arushgamer783@gmail.com)</span>
                 </button>
               </div>
             </form>

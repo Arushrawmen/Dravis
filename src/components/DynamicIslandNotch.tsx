@@ -6,7 +6,7 @@
  * instant direct phone calling HUD, multi-number contact expansion notch, and real-time status.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Youtube,
@@ -38,6 +38,7 @@ import {
   Bluetooth,
 } from "lucide-react";
 import { VoiceState, ActiveCallState, ContactSelectionPrompt, MusicPlaybackState } from "../types";
+import { speechEngine } from "../utils/speech";
 
 export interface DynamicNotchProps {
   voiceState: VoiceState;
@@ -52,6 +53,7 @@ export interface DynamicNotchProps {
   onEndCall?: () => void;
   onToggleMute?: () => void;
   onToggleSpeaker?: () => void;
+  onToggleRecording?: () => void;
   onCancelContactPrompt?: () => void;
   musicPlayback?: MusicPlaybackState | null;
   onTogglePlayMusic?: () => void;
@@ -73,6 +75,7 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
   onEndCall,
   onToggleMute,
   onToggleSpeaker,
+  onToggleRecording,
   onCancelContactPrompt,
   musicPlayback,
   onTogglePlayMusic,
@@ -84,15 +87,62 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
   const isCallActive = Boolean(activeCall?.isActive);
   const isMusicActive = Boolean(musicPlayback?.isPlaying || (musicPlayback && musicPlayback.currentTime > 0));
   const isDeviceStatusActive = Boolean(deviceStatusFeedback);
+  const [isEngineSpeaking, setIsEngineSpeaking] = useState<boolean>(() => speechEngine.isSpeaking());
+  const isSpeakingResponse = voiceState === "SPEAKING" || isEngineSpeaking;
+
   const isExpanded =
     isMultiNumberExpanded ||
     isCallActive ||
     isMusicActive ||
     isDeviceStatusActive ||
     isListening ||
-    voiceState === "SPEAKING" ||
+    isSpeakingResponse ||
     voiceState === "THINKING" ||
     Boolean(activeAppTitle);
+
+  const [speechVolume, setSpeechVolume] = useState<number>(0);
+  const [waveformBands, setWaveformBands] = useState<number[]>([
+    0.15, 0.25, 0.4, 0.6, 0.75, 0.6, 0.4, 0.25, 0.15,
+  ]);
+  const [wavePhase, setWavePhase] = useState<number>(0);
+
+  useEffect(() => {
+    setIsEngineSpeaking(speechEngine.isSpeaking());
+    return speechEngine.subscribeSpeakingState((speaking) => {
+      setIsEngineSpeaking(speaking);
+    });
+  }, []);
+
+  // Sample real-time speechEngine output volume & frequency bands during voice responses
+  useEffect(() => {
+    if (!isSpeakingResponse) {
+      setSpeechVolume(0);
+      setWaveformBands([0.12, 0.14, 0.16, 0.18, 0.2, 0.18, 0.16, 0.14, 0.12]);
+      return;
+    }
+
+    let rafId: number | null = null;
+    let lastUpdate = 0;
+
+    const tick = (now: number) => {
+      if (now - lastUpdate >= 32) {
+        lastUpdate = now;
+        const vol = speechEngine.getOutputVolume();
+        const bands = speechEngine.getOutputWaveformBands(9);
+        setSpeechVolume(vol > 0 ? vol : 0.35 + 0.2 * Math.sin(now / 140));
+        setWaveformBands(bands);
+        setWavePhase((now / 110) % (Math.PI * 2));
+      }
+      if (voiceState === "SPEAKING" || speechEngine.isSpeaking()) {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [isSpeakingResponse, voiceState]);
 
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -148,10 +198,12 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
       );
     }
 
-    if (voiceState === "SPEAKING") {
+    if (isSpeakingResponse) {
+      const mouthScaleY = 1 + speechVolume * 1.45;
+      const mouthScaleX = 1 + speechVolume * 0.22;
       return (
         <div className="flex items-center gap-1">
-          {/* Animated smiling face with mouth movement */}
+          {/* Animated smiling face with volume-reactive mouth movement */}
           <div className="relative w-5 h-5 flex items-center justify-center">
             {/* Eyes */}
             <motion.div
@@ -164,34 +216,38 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
               animate={{ scaleY: [1, 0.2, 1] }}
               transition={{ repeat: Infinity, duration: 2.2 }}
             />
-            {/* Dynamic Moving Talking Smile / Mouth */}
+            {/* Volume-driven Talking Smile / Mouth */}
             <motion.div
               className="absolute bottom-0.5 w-3 h-2 border-b-2 border-white rounded-b-full"
               animate={{
-                scaleY: [1, 2.2, 1, 1.8, 1],
-                scaleX: [1, 1.2, 0.9, 1.1, 1],
+                scaleY: mouthScaleY,
+                scaleX: mouthScaleX,
               }}
               transition={{
-                repeat: Infinity,
-                duration: 0.35,
-                ease: "easeInOut",
+                duration: 0.06,
+                ease: "easeOut",
               }}
             />
           </div>
-          {/* Acoustic Waveform mini bars beside smile */}
-          <div className="flex items-center gap-0.5 h-3 ml-1">
-            {[0.4, 0.9, 0.6, 1, 0.5].map((h, i) => (
-              <motion.span
-                key={i}
-                className="w-0.5 bg-cyan-400 rounded-full"
-                animate={{ height: ["4px", "14px", "6px"] }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 0.4 + i * 0.1,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
+          {/* Acoustic Waveform mini bars beside smile driven by speechEngine output volume */}
+          <div className="flex items-center gap-0.5 h-3.5 ml-1">
+            {waveformBands.slice(2, 7).map((bandLevel, i) => {
+              const barPx = Math.max(3, Math.round(bandLevel * 14));
+              return (
+                <motion.span
+                  key={i}
+                  className="w-0.5 bg-cyan-400 rounded-full shadow-[0_0_6px_rgba(34,211,238,0.65)]"
+                  animate={{
+                    height: `${barPx}px`,
+                    opacity: 0.55 + bandLevel * 0.45,
+                  }}
+                  transition={{
+                    duration: 0.06,
+                    ease: "easeOut",
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       );
@@ -290,8 +346,45 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
     }
 
     if (!activeAppIcon) {
-      if (voiceState === "SPEAKING") {
-        return <Volume2 className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />;
+      if (isSpeakingResponse) {
+        return (
+          <div
+            className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-400/25"
+            title={`Speech Output Level: ${Math.round(speechVolume * 100)}%`}
+          >
+            <div className="flex items-center gap-[2px] h-3.5">
+              {waveformBands.map((level, idx) => {
+                const heightPx = Math.max(2, Math.round(level * 13));
+                const isCenter = idx >= 3 && idx <= 5;
+                return (
+                  <motion.span
+                    key={idx}
+                    className={`w-[2px] rounded-full ${
+                      isCenter
+                        ? "bg-gradient-to-t from-cyan-400 via-teal-300 to-white shadow-[0_0_6px_rgba(34,211,238,0.8)]"
+                        : "bg-cyan-400/75"
+                    }`}
+                    animate={{
+                      height: `${heightPx}px`,
+                      opacity: 0.45 + level * 0.55,
+                    }}
+                    transition={{
+                      duration: 0.055,
+                      ease: "easeOut",
+                    }}
+                  />
+                );
+              })}
+            </div>
+            <Volume2
+              className="w-3 h-3 text-cyan-300 transition-transform duration-75"
+              style={{
+                transform: `scale(${1 + speechVolume * 0.18})`,
+                filter: `drop-shadow(0 0 ${Math.round(2 + speechVolume * 6)}px rgba(34,211,238,0.85))`,
+              }}
+            />
+          </div>
+        );
       }
       if (isListening || voiceState === "LISTENING") {
         return <Mic className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />;
@@ -491,15 +584,55 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
                   >
                     <span className="text-[10px] font-mono font-bold text-white truncate leading-none block">
                       {activeAppTitle ||
-                        (voiceState === "SPEAKING"
+                        (isSpeakingResponse
                           ? "Dravis Speaking"
                           : isListening
                           ? "Listening..."
                           : "Dravis ASI")}
                     </span>
-                    <span className="text-[8px] font-mono text-cyan-300/80 truncate block mt-0.5">
-                      {statusText || (isListening ? "Say 'Hey Dravis...'" : "Dynamic Island Active")}
-                    </span>
+                    {isSpeakingResponse ? (
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <svg
+                          viewBox="0 0 96 10"
+                          className="w-20 h-2.5 overflow-visible shrink-0"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d={(() => {
+                              const pts: string[] = [];
+                              const steps = 16;
+                              for (let i = 0; i <= steps; i++) {
+                                const x = (i / steps) * 96;
+                                const bandIdx = Math.min(
+                                  waveformBands.length - 1,
+                                  Math.floor((i / steps) * waveformBands.length)
+                                );
+                                const env = Math.sin((i / steps) * Math.PI);
+                                const amp =
+                                  (0.8 + speechVolume * 3.6) *
+                                  (0.5 + (waveformBands[bandIdx] || 0.2) * 0.6) *
+                                  env;
+                                const y = 5 + Math.sin(wavePhase + i * 0.95) * amp;
+                                pts.push(`${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(2)}`);
+                              }
+                              return pts.join(" ");
+                            })()}
+                            fill="none"
+                            stroke="rgba(34, 211, 238, 0.85)"
+                            strokeWidth="1.35"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="text-[8px] font-mono text-cyan-300/75 truncate">
+                          {Math.round(speechVolume * 100)}%
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-[8px] font-mono text-cyan-300/80 truncate block mt-0.5">
+                        {statusText || (isListening ? "Say 'Hey Dravis...'" : "Dynamic Island Active")}
+                      </span>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -542,7 +675,27 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
                 </button>
               </div>
             ) : (
-              renderAppIcon()
+              <div className="flex items-center gap-1.5">
+                {activeAppIcon && isSpeakingResponse && (
+                  <div
+                    className="flex items-center gap-[2px] h-3.5 px-1"
+                    title={`Speech Output Level: ${Math.round(speechVolume * 100)}%`}
+                  >
+                    {waveformBands.slice(1, 8).map((level, idx) => (
+                      <motion.span
+                        key={idx}
+                        className="w-[2px] rounded-full bg-cyan-400/80 shadow-[0_0_5px_rgba(34,211,238,0.65)]"
+                        animate={{
+                          height: `${Math.max(2, Math.round(level * 12))}px`,
+                          opacity: 0.45 + level * 0.55,
+                        }}
+                        transition={{ duration: 0.055, ease: "easeOut" }}
+                      />
+                    ))}
+                  </div>
+                )}
+                {renderAppIcon()}
+              </div>
             )}
           </div>
         </div>
@@ -579,24 +732,54 @@ export const DynamicIslandNotch: React.FC<DynamicNotchProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="w-full mt-2 pt-2 border-t border-white/10 flex items-center justify-between px-1"
           >
-            {/* Audio Waveform */}
-            <div className="flex items-center gap-0.5 h-3">
-              {[0.4, 0.8, 1, 0.6, 0.9, 0.3].map((h, i) => (
-                <motion.span
-                  key={i}
-                  className="w-0.5 bg-emerald-400 rounded-full"
-                  animate={{ height: ["4px", "12px", "4px"] }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 0.5 + i * 0.1,
-                    ease: "easeInOut",
-                  }}
-                />
-              ))}
+            {/* Audio Waveform + Recording Indicator */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-0.5 h-3">
+                {[0.4, 0.8, 1, 0.6, 0.9, 0.3].map((h, i) => (
+                  <motion.span
+                    key={i}
+                    className={`w-0.5 rounded-full ${
+                      activeCall?.isRecording ? "bg-rose-400" : "bg-emerald-400"
+                    }`}
+                    animate={{ height: ["4px", "12px", "4px"] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 0.5 + i * 0.1,
+                      ease: "easeInOut",
+                    }}
+                  />
+                ))}
+              </div>
+              {activeCall?.isRecording && (
+                <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-[9px] font-mono font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" />
+                  <span>REC {formatDuration(activeCall.recordingDurationSeconds || 0)}</span>
+                </div>
+              )}
             </div>
 
             {/* In-Call Action Buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onToggleRecording) onToggleRecording();
+                }}
+                className={`px-2 py-1 rounded-full border text-[9px] font-mono font-bold flex items-center gap-1 transition-all ${
+                  activeCall?.isRecording
+                    ? "bg-rose-500/25 text-rose-200 border-rose-400 shadow-[0_0_10px_rgba(244,63,94,0.45)]"
+                    : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10"
+                }`}
+                title={activeCall?.isRecording ? "Stop Call Recording & Save Audio" : "Start Call Recording"}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    activeCall?.isRecording ? "bg-rose-500 animate-pulse" : "bg-rose-400/70"
+                  }`}
+                />
+                <span>{activeCall?.isRecording ? "STOP REC" : "REC"}</span>
+              </button>
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();

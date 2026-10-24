@@ -13,6 +13,9 @@ import {
   Wifi,
   ShieldCheck,
   Mail,
+  Calendar,
+  Users,
+  MapPin,
 } from "lucide-react";
 import { NavigationTab } from "../types";
 import { soundEffects } from "../utils/audioSynth";
@@ -93,6 +96,33 @@ export const BottomBar: React.FC<BottomBarProps> = ({
       tab: "GMAIL" as NavigationTab,
       activeColor: "text-red-400",
       dotColor: "bg-red-400 shadow-[0_0_8px_#EF4444]",
+    },
+    {
+      id: "node-calendar",
+      title: "CALENDAR HUB",
+      status: "Schedule Ready",
+      icon: Calendar,
+      tab: "CALENDAR" as NavigationTab,
+      activeColor: "text-blue-400",
+      dotColor: "bg-blue-400 shadow-[0_0_8px_#3B82F6]",
+    },
+    {
+      id: "node-contacts",
+      title: "CONTACTS HUB",
+      status: "People API Ready",
+      icon: Users,
+      tab: "CONTACTS" as NavigationTab,
+      activeColor: "text-emerald-400",
+      dotColor: "bg-emerald-400 shadow-[0_0_8px_#10B981]",
+    },
+    {
+      id: "node-maps",
+      title: "GOOGLE MAPS",
+      status: "GPS Navigation",
+      icon: MapPin,
+      tab: "MAPS" as NavigationTab,
+      activeColor: "text-cyan-400",
+      dotColor: "bg-cyan-400 shadow-[0_0_8px_#06B6D4]",
     },
   ];
 

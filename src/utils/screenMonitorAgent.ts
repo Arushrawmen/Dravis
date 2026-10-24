@@ -63,6 +63,21 @@ const NAVIGATION_ALIASES: Array<{
     keywords: ["drive", "google drive", "gdrive", "cloud storage", "drive files", "ड्राइव", "गूगल ड्राइव"],
   },
   {
+    tab: "CALENDAR",
+    spokenName: "Google Calendar & Agenda",
+    keywords: ["calendar", "google calendar", "schedule", "events", "agenda", "meetings", "कैलेंडर", "मीटिंग्स", "अपॉइंटमेंट"],
+  },
+  {
+    tab: "CONTACTS",
+    spokenName: "Google Contacts & Address Book",
+    keywords: ["contacts", "google contacts", "address book", "phone book", "call list", "कॉन्टैक्ट्स", "फोन बुक", "संपर्क"],
+  },
+  {
+    tab: "MAPS",
+    spokenName: "Google Maps & Navigation HUD",
+    keywords: ["maps", "google maps", "map", "navigation", "gps", "location", "मैप्स", "गूगल मैप", "नक्शा", "रास्ता"],
+  },
+  {
     tab: "FILES",
     spokenName: "Files & Real Folder Creator",
     keywords: ["files", "file manager", "folder panel", "repository", "फाइल्स", "फोल्डर पैनल"],

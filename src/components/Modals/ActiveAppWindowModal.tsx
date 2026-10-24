@@ -30,6 +30,7 @@ import {
   Palette,
   Table,
   HardDrive,
+  LayoutGrid,
 } from "lucide-react";
 import {
   LaunchedAppDescriptor,
@@ -44,6 +45,8 @@ interface ActiveAppWindowModalProps {
   onClose: () => void;
   onSaveFileToWorkspace?: (fileName: string, content: string, folderName?: string) => void;
   onInitiateCall?: (name: string, number: string, label?: string) => void;
+  isTiledGrid?: boolean;
+  onToggleTiledGrid?: (isTiled: boolean) => void;
 }
 
 interface WhatsAppChatContact {
@@ -61,8 +64,21 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
   onClose,
   onSaveFileToWorkspace,
   onInitiateCall,
+  isTiledGrid = false,
+  onToggleTiledGrid,
 }) => {
   const [isMaximized, setIsMaximized] = useState(false);
+  const [tiledGrid, setTiledGrid] = useState<boolean>(isTiledGrid);
+
+  useEffect(() => {
+    setTiledGrid(isTiledGrid);
+  }, [isTiledGrid]);
+
+  const handleToggleGrid = () => {
+    const next = !tiledGrid;
+    setTiledGrid(next);
+    onToggleTiledGrid?.(next);
+  };
 
   // Built-in Calculator State
   const [calcExpr, setCalcExpr] = useState("");
@@ -380,7 +396,7 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 14 }}
           className={`relative bg-slate-950/95 backdrop-blur-3xl border border-cyan-500/40 rounded-3xl flex flex-col shadow-[0_0_55px_rgba(6,182,212,0.3)] overflow-hidden transition-all ${
-            isMaximized ? "w-full h-full" : "w-full max-w-5xl max-h-[90vh]"
+            isMaximized ? "w-full h-full" : tiledGrid ? "w-full max-w-7xl h-[92vh]" : "w-full max-w-5xl max-h-[90vh]"
           }`}
         >
           {/* Top Desktop Window Title Bar */}
@@ -411,9 +427,13 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs sm:text-sm font-mono font-bold text-white">
-                    {app.name}
+                    {tiledGrid ? "Dravis Desktop Tiled Grid Layout" : app.name}
                   </span>
-                  {app.lastRoutingMode === "DESKTOP_NATIVE" || app.desktopAvailable ? (
+                  {tiledGrid ? (
+                    <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 animate-pulse">
+                      ✨ AUTO-ARRANGED GRID ACTIVE
+                    </span>
+                  ) : app.lastRoutingMode === "DESKTOP_NATIVE" || app.desktopAvailable ? (
                     <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                       🖥️ DESKTOP NATIVE APP
                     </span>
@@ -424,19 +444,36 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
                   )}
                 </div>
                 <span className="text-[10px] font-mono text-slate-400 block truncate max-w-[260px] sm:max-w-md">
-                  {app.lastRoutingReason
+                  {tiledGrid
+                    ? "Interactive 4-Quadrant Snapped Grid: Code Editor, WhatsApp, Calculator & Explorer"
+                    : app.lastRoutingReason
                     ? `${app.lastRoutingReason} • `
                     : app.windowsUri
                     ? `Native OS URI: ${app.windowsUri} • `
                     : ""}
-                  {app.webUrl}
+                  {!tiledGrid && app.webUrl}
                 </span>
               </div>
             </div>
 
             {/* Direct Unblocked Native OS & External Browser Launch Buttons */}
             <div className="flex flex-wrap items-center gap-2">
-              {app.windowsUri && (
+              {/* Auto-Arrange Windows Tiled Grid Toggle Button */}
+              <button
+                type="button"
+                onClick={handleToggleGrid}
+                className={`px-3 py-1.5 rounded-xl border font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  tiledGrid
+                    ? "bg-cyan-500/25 border-cyan-400 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.4)]"
+                    : "bg-slate-800/80 hover:bg-slate-700/80 border-cyan-500/30 text-slate-200 hover:text-cyan-300"
+                }`}
+                title="Auto-Arrange Windows into Tiled Grid Layout on Command"
+              >
+                <LayoutGrid className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{tiledGrid ? "Tiled Grid (4 Apps)" : "Auto-Arrange Windows"}</span>
+              </button>
+
+              {app.windowsUri && !tiledGrid && (
                 <a
                   href={app.windowsUri}
                   target="_top"
@@ -449,7 +486,7 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
                 </a>
               )}
 
-              {app.androidIntent && (
+              {app.androidIntent && !tiledGrid && (
                 <a
                   href={app.androidIntent}
                   target="_top"
@@ -462,15 +499,17 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
                 </a>
               )}
 
-              <a
-                href={app.webUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-mono text-[11px] font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Open {app.name} in Browser ↗</span>
-              </a>
+              {!tiledGrid && (
+                <a
+                  href={app.webUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-mono text-[11px] font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open {app.name} in Browser ↗</span>
+                </a>
+              )}
 
               <button
                 onClick={() => setIsMaximized(!isMaximized)}
@@ -539,8 +578,226 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
 
           {/* Main App Body */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 flex flex-col gap-4">
-            {/* MODE 0: WHATSAPP DESKTOP LIVE INTERFACE */}
-            {(app.builtInTool === "WHATSAPP_DESKTOP" || app.id === "whatsapp") && (
+            {tiledGrid ? (
+              <div className="flex-1 flex flex-col gap-3 min-h-[500px]">
+                {/* Tiled Grid Status Banner */}
+                <div className="p-3 rounded-2xl bg-gradient-to-r from-cyan-950/60 via-slate-900/90 to-emerald-950/60 border border-cyan-500/40 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
+                    <span className="text-xs font-mono font-bold text-cyan-200">
+                      AUTONOMOUS 2x2 TILED GRID: 4 ACTIVE DESKTOP APPLICATIONS SNAPPED & SYNCED
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[11px] font-mono text-emerald-300 bg-emerald-950/60 px-2.5 py-0.5 rounded-lg border border-emerald-500/30">
+                      ✨ Virtual Cursor Snapped
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleToggleGrid}
+                      className="text-xs font-mono text-slate-300 hover:text-white underline cursor-pointer"
+                    >
+                      Exit Tiled Grid
+                    </button>
+                  </div>
+                </div>
+
+                {/* The 2x2 Grid Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
+                  {/* Quadrant 1: Dravis Code Pad & Live Document Editor */}
+                  <div className="rounded-2xl bg-slate-900/90 border border-cyan-500/40 flex flex-col overflow-hidden shadow-lg">
+                    <div className="px-3.5 py-2 bg-slate-950/90 border-b border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileCode className="w-4 h-4 text-cyan-400" />
+                        <span className="text-xs font-mono font-bold text-white">Code & Document Pad</span>
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
+                          Quadrant 1
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleSaveToRealDevice}
+                        className="px-2 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 text-emerald-300 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+                      >
+                        <FolderPlus className="w-3 h-3" />
+                        <span>Save to PC</span>
+                      </button>
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={editorFolderName}
+                          onChange={(e) => setEditorFolderName(e.target.value)}
+                          placeholder="Folder Name"
+                          className="w-1/2 bg-black/60 border border-white/10 rounded-lg px-2.5 py-1 text-[11px] font-mono text-cyan-300 outline-none"
+                        />
+                        <input
+                          type="text"
+                          value={editorFileName}
+                          onChange={(e) => setEditorFileName(e.target.value)}
+                          placeholder="File Name"
+                          className="w-1/2 bg-black/60 border border-white/10 rounded-lg px-2.5 py-1 text-[11px] font-mono text-white outline-none"
+                        />
+                      </div>
+                      <textarea
+                        value={editorContent}
+                        onChange={(e) => setEditorContent(e.target.value)}
+                        className="flex-1 min-h-[170px] rounded-xl bg-black/80 border border-white/10 p-3 font-mono text-xs text-emerald-300 focus:outline-none focus:border-cyan-400 resize-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quadrant 2: WhatsApp Desktop Direct Messaging */}
+                  <div className="rounded-2xl bg-slate-900/90 border border-emerald-500/40 flex flex-col overflow-hidden shadow-lg">
+                    <div className="px-3.5 py-2 bg-slate-950/90 border-b border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-emerald-400" />
+                        <span className="text-xs font-mono font-bold text-white">WhatsApp Desktop Hub</span>
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                          Quadrant 2
+                        </span>
+                      </div>
+                      <a
+                        href="whatsapp://"
+                        target="_top"
+                        rel="noopener noreferrer"
+                        className="px-2 py-1 rounded-lg bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-mono text-[10px] font-bold flex items-center gap-1"
+                      >
+                        <Monitor className="w-3 h-3" />
+                        <span>App ↗</span>
+                      </a>
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col gap-2">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="text-white font-bold">{activeWaContact.name} ({activeWaContact.phone})</span>
+                        <span className="text-[10px] text-emerald-400">{activeWaContact.status}</span>
+                      </div>
+                      <div className="flex-1 p-2.5 rounded-xl bg-black/60 border border-white/10 overflow-y-auto space-y-1.5 min-h-[130px] max-h-[170px]">
+                        {activeWaContact.messages.map((m, idx) => (
+                          <div
+                            key={idx}
+                            className={`text-[11px] font-mono px-2.5 py-1 rounded-lg max-w-[85%] ${
+                              m.sender === "me"
+                                ? "ml-auto bg-emerald-600/30 text-emerald-200 border border-emerald-500/30"
+                                : "mr-auto bg-slate-800 text-slate-200 border border-white/10"
+                            }`}
+                          >
+                            <span>{m.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <form onSubmit={handleSendWhatsAppMsg} className="flex gap-1.5">
+                        <input
+                          type="text"
+                          value={waMessage}
+                          onChange={(e) => setWaMessage(e.target.value)}
+                          placeholder="Type message..."
+                          className="flex-1 bg-black/60 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-mono text-white outline-none focus:border-emerald-400"
+                        />
+                        <button
+                          type="submit"
+                          className="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono text-xs font-bold"
+                        >
+                          Send
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+
+                  {/* Quadrant 3: Scientific & Standard Calculator */}
+                  <div className="rounded-2xl bg-slate-900/90 border border-amber-500/40 flex flex-col overflow-hidden shadow-lg">
+                    <div className="px-3.5 py-2 bg-slate-950/90 border-b border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CalcIcon className="w-4 h-4 text-amber-400" />
+                        <span className="text-xs font-mono font-bold text-white">Scientific Calculator</span>
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                          Quadrant 3
+                        </span>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-amber-300">{calcResult}</span>
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col gap-2">
+                      <div className="p-2 rounded-lg bg-black/70 border border-white/10 flex flex-col items-end justify-center min-h-[46px]">
+                        <span className="text-[10px] font-mono text-slate-400">{calcExpr || "0"}</span>
+                        <span className="text-lg font-mono font-bold text-amber-300">{calcResult}</span>
+                      </div>
+                      <div className="grid grid-cols-4 gap-1.5 flex-1">
+                        {["C", "(", ")", "÷", "7", "8", "9", "×", "4", "5", "6", "-", "1", "2", "3", "+", "0", ".", "DEL", "="].map((btn) => (
+                          <button
+                            key={btn}
+                            type="button"
+                            onClick={() => handleCalcPress(btn)}
+                            className={`py-1 rounded-lg font-mono font-bold text-xs transition-all cursor-pointer ${
+                              btn === "="
+                                ? "bg-amber-400 text-slate-950 hover:bg-amber-300"
+                                : ["÷", "×", "-", "+"].includes(btn)
+                                ? "bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
+                                : btn === "C" || btn === "DEL"
+                                ? "bg-red-500/20 text-red-300"
+                                : "bg-slate-800 text-white hover:bg-slate-700"
+                            }`}
+                          >
+                            {btn}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quadrant 4: Windows File Explorer & Shell */}
+                  <div className="rounded-2xl bg-slate-900/90 border border-purple-500/40 flex flex-col overflow-hidden shadow-lg">
+                    <div className="px-3.5 py-2 bg-slate-950/90 border-b border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Folder className="w-4 h-4 text-purple-400" />
+                        <span className="text-xs font-mono font-bold text-white">File Explorer & Shell</span>
+                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-400/30">
+                          Quadrant 4
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono text-purple-300 truncate max-w-[150px]">{explorerCurrentPath}</span>
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col gap-2">
+                      <div className="flex gap-1.5">
+                        {explorerFolders.slice(0, 4).map((fName) => (
+                          <div
+                            key={fName}
+                            onClick={() => setExplorerCurrentPath(`C:\\Users\\Operator\\Desktop\\${fName}`)}
+                            className="flex-1 p-2 rounded-xl bg-slate-950/80 hover:bg-slate-800 border border-white/10 flex flex-col items-center gap-1 cursor-pointer transition-all"
+                          >
+                            <Folder className="w-5 h-5 text-amber-400" />
+                            <span className="text-[10px] font-mono text-white truncate max-w-full">{fName}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="p-2 rounded-xl bg-black/80 border border-white/10 font-mono text-[10px] text-cyan-300 overflow-y-auto max-h-[80px]">
+                        {termLogs.slice(-3).map((line, idx) => (
+                          <div key={idx}>{line}</div>
+                        ))}
+                      </div>
+                      <form onSubmit={handleTerminalSubmit} className="flex gap-1.5">
+                        <input
+                          type="text"
+                          value={termInput}
+                          onChange={(e) => setTermInput(e.target.value)}
+                          placeholder="PS C:\> Type command..."
+                          className="flex-1 bg-black/60 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-mono text-white outline-none focus:border-purple-400"
+                        />
+                        <button
+                          type="submit"
+                          className="px-3 py-1 rounded-lg bg-purple-500 hover:bg-purple-400 text-white font-mono text-xs font-bold"
+                        >
+                          Exec
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* MODE 0: WHATSAPP DESKTOP LIVE INTERFACE */}
+                {(app.builtInTool === "WHATSAPP_DESKTOP" || app.id === "whatsapp") && (
               <div className="flex flex-col gap-3 flex-1 min-h-[420px]">
                 {/* Top Quick Action Banner for Native WhatsApp Desktop & Web */}
                 <div className="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-2">
@@ -1063,6 +1320,8 @@ export const ActiveAppWindowModal: React.FC<ActiveAppWindowModalProps> = ({
                   </div>
                 )}
               </div>
+            )}
+            </>
             )}
           </div>
         </motion.div>

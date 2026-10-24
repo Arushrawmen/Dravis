@@ -623,66 +623,25 @@ export const INITIAL_GENERATED_IMAGES: import("../types").GeneratedImageItem[] =
 ];
 
 export const INITIAL_USER_ACCOUNT: import("../types").UserAccount = {
-  id: "usr-arush-9942",
-  email: "arushgamer783@gmail.com",
-  displayName: "Arush Sir",
-  roleTitle: "Chief Architect & Master",
+  id: "usr-operator",
+  email: "",
+  displayName: "Operator",
+  roleTitle: "Authorized Master",
   provider: "GOOGLE",
   avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
   createdAt: "2025-01-15T08:00:00Z",
-  lastLogin: "Today, 07:19 AM",
+  lastLogin: "Never",
   isLoggedIn: false,
   isSupervised: false,
-  sessions: [
-    {
-      id: "sess-1",
-      device: "Desktop Workstation (Windows 11)",
-      ip: "192.168.1.104",
-      location: "Delhi, IN",
-      lastActive: "Active Now",
-      isCurrent: true,
-    },
-    {
-      id: "sess-2",
-      device: "Mobile Companion (Android)",
-      ip: "192.168.1.112",
-      location: "Delhi, IN",
-      lastActive: "2 hours ago",
-      isCurrent: false,
-    },
-  ],
+  sessions: [],
 };
 
-export const INITIAL_SAVED_ACCOUNTS: import("../types").UserAccount[] = [
-  INITIAL_USER_ACCOUNT,
-  {
-    id: "usr-arush-studio",
-    email: "arush.studio@gmail.com",
-    displayName: "Arush Studio",
-    roleTitle: "Creative AI & Gaming Lead",
-    provider: "EMAIL",
-    avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
-    createdAt: "2025-02-10T10:30:00Z",
-    lastLogin: "Yesterday, 09:40 PM",
-    isLoggedIn: false,
-    isSupervised: false,
-    sessions: [
-      {
-        id: "sess-studio-1",
-        device: "Android Liquid Glass Companion",
-        ip: "192.168.1.112",
-        location: "Delhi, IN",
-        lastActive: "Yesterday",
-        isCurrent: false,
-      },
-    ],
-  },
-];
+export const INITIAL_SAVED_ACCOUNTS: import("../types").UserAccount[] = [];
 
 export function buildDefaultAccountWorkspace(
   account: import("../types").UserAccount
 ): import("../types").AccountWorkspaceData {
-  if (account.id === "usr-arush-9942" || account.email.toLowerCase() === "arushgamer783@gmail.com") {
+  if (account.id && account.email) {
     return {
       accountId: account.id,
       userProfile: {

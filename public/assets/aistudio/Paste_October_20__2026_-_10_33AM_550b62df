@@ -1,0 +1,2723 @@
+
+
+
+
+
+
+
+
+
+<!doctype html>
+<html 
+      lang="en"
+      dir="ltr">
+  <head>
+    <meta name="google-signin-client-id" content="721724668570-nbkv1cfusk7kk4eni4pjvepaus73b13t.apps.googleusercontent.com"><meta name="google-signin-scope"
+          content="profile email https://www.googleapis.com/auth/developerprofiles https://www.googleapis.com/auth/developerprofiles.award https://www.googleapis.com/auth/devprofiles.full_control.firstparty"><meta property="og:site_name" content="Google for Developers">
+    <meta property="og:type" content="website"><meta name="theme-color" content="#ff0000"><meta charset="utf-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+    <link rel="manifest" href="/_pwa/developers/manifest.json"
+          crossorigin="use-credentials">
+    <link rel="preconnect" href="//www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="//fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="//www.google-analytics.com" crossorigin><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700&display=swap">
+      <link rel="stylesheet"
+            href="//fonts.googleapis.com/css2?family=Material+Icons&family=Material+Symbols+Outlined&display=block"><link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/css/app.css">
+      <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/images/favicon-new.png">
+    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/images/touchicon-180-new.png"><link rel="canonical" href="https://developers.google.com/youtube/reporting"><link rel="search" type="application/opensearchdescription+xml"
+            title="Google for Developers" href="https://developers.google.com/s/opensearch.xml">
+      <link rel="alternate" hreflang="en"
+          href="https://developers.google.com/youtube/reporting" /><link rel="alternate" hreflang="x-default" href="https://developers.google.com/youtube/reporting" /><link rel="alternate" hreflang="ar"
+          href="https://developers.google.com/youtube/reporting?hl=ar" /><link rel="alternate" hreflang="bn"
+          href="https://developers.google.com/youtube/reporting?hl=bn" /><link rel="alternate" hreflang="zh-Hans"
+          href="https://developers.google.com/youtube/reporting?hl=zh-cn" /><link rel="alternate" hreflang="zh-Hant"
+          href="https://developers.google.com/youtube/reporting?hl=zh-tw" /><link rel="alternate" hreflang="fa"
+          href="https://developers.google.com/youtube/reporting?hl=fa" /><link rel="alternate" hreflang="fr"
+          href="https://developers.google.com/youtube/reporting?hl=fr" /><link rel="alternate" hreflang="de"
+          href="https://developers.google.com/youtube/reporting?hl=de" /><link rel="alternate" hreflang="he"
+          href="https://developers.google.com/youtube/reporting?hl=he" /><link rel="alternate" hreflang="hi"
+          href="https://developers.google.com/youtube/reporting?hl=hi" /><link rel="alternate" hreflang="id"
+          href="https://developers.google.com/youtube/reporting?hl=id" /><link rel="alternate" hreflang="it"
+          href="https://developers.google.com/youtube/reporting?hl=it" /><link rel="alternate" hreflang="ja"
+          href="https://developers.google.com/youtube/reporting?hl=ja" /><link rel="alternate" hreflang="ko"
+          href="https://developers.google.com/youtube/reporting?hl=ko" /><link rel="alternate" hreflang="pl"
+          href="https://developers.google.com/youtube/reporting?hl=pl" /><link rel="alternate" hreflang="pt-BR"
+          href="https://developers.google.com/youtube/reporting?hl=pt-br" /><link rel="alternate" hreflang="ru"
+          href="https://developers.google.com/youtube/reporting?hl=ru" /><link rel="alternate" hreflang="es-419"
+          href="https://developers.google.com/youtube/reporting?hl=es-419" /><link rel="alternate" hreflang="th"
+          href="https://developers.google.com/youtube/reporting?hl=th" /><link rel="alternate" hreflang="tr"
+          href="https://developers.google.com/youtube/reporting?hl=tr" /><link rel="alternate" hreflang="vi"
+          href="https://developers.google.com/youtube/reporting?hl=vi" /><title>Introduction &nbsp;|&nbsp; YouTube Analytics and Reporting APIs &nbsp;|&nbsp; Google for Developers</title>
+
+<meta property="og:title" content="Introduction &nbsp;|&nbsp; YouTube Analytics and Reporting APIs &nbsp;|&nbsp; Google for Developers"><meta name="description" content="Discover the similarities and differences in how the YouTube Analytics API and Reporting API provide access to analytics data.">
+  <meta property="og:description" content="Discover the similarities and differences in how the YouTube Analytics API and Reporting API provide access to analytics data."><meta property="og:url" content="https://developers.google.com/youtube/reporting"><meta property="og:image" content="https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/images/opengraph/youtube-theme.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675"><meta property="og:locale" content="en"><meta name="twitter:card" content="summary_large_image"><script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "YouTube",
+      "item": "https://developers.google.com/youtube"
+    },{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Analytics and Reporting APIs",
+      "item": "https://developers.google.com/youtube/analytics"
+    },{
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Introduction",
+      "item": "https://developers.google.com/youtube/reporting"
+    }]
+  }
+  </script>
+  <meta name="xsrf_token" content="nyFmFqhS3XJrEyO7eHA7Xyk2EyZi8ll5wK5sV2PMeek6MTc5MjQ3MjYxNDAyNTI3NA">
+  
+
+  <meta name="session_expiry" content="0">
+  <meta name="uid" content="116166835568774244915">
+  
+    
+    
+    
+    
+    
+  
+
+    </head>
+  <body class="docs color-scheme--light"
+        template="page"
+        theme="youtube-theme"
+        type="reference"
+        
+        
+        
+        layout="docs"
+        
+        
+        
+        
+        
+          
+            concierge='closed'
+          
+        
+        display-toc
+        pending>
+  
+    <devsite-progress type="indeterminate" id="app-progress"></devsite-progress>
+  
+  
+    <a href="#main-content" class="skip-link button">
+      
+      Skip to main content
+    </a>
+    <section class="devsite-wrapper">
+      <devsite-cookie-notification-bar></devsite-cookie-notification-bar>
+        <devsite-header role="banner">
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="devsite-header--inner" data-nosnippet>
+  <div class="devsite-top-logo-row-wrapper-wrapper">
+    <div class="devsite-top-logo-row-wrapper">
+      <div class="devsite-top-logo-row">
+        <button type="button" id="devsite-hamburger-menu"
+          class="devsite-header-icon-button button-flat material-icons gc-analytics-event"
+          data-category="Site-Wide Custom Events"
+          data-label="Navigation menu button"
+          visually-hidden
+          aria-label="Open menu">
+        </button>
+        
+<div class="devsite-product-name-wrapper">
+
+  
+    
+  
+  <a href="https://developers.google.com/youtube">
+    
+  <div class="devsite-product-logo-container"
+       
+       
+       
+    size="medium"
+  >
+  
+    <picture>
+      
+      <img class="devsite-product-logo"
+           alt="YouTube"
+           src="https://developers.google.com/static/site-assets/logo-youtube.svg"
+           srcset=" /static/site-assets/logo-youtube.svg"
+           sizes="64px"
+           loading="lazy"
+           >
+    </picture>
+  
+  </div>
+  
+  </a>
+  
+
+  
+
+
+
+  
+  
+  <span class="devsite-product-name">
+    <ul class="devsite-breadcrumb-list"
+  
+    aria-label="Product breadcrumb">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+      
+        
+  <a href="https://developers.google.com/youtube"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Upper Header"
+      
+        data-value="1"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="1"
+      
+        track-metadata-eventdetail="YouTube"
+      
+    >
+    
+          YouTube
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/youtube/analytics"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Upper Header"
+      
+        data-value="2"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="2"
+      
+        track-metadata-eventdetail="YouTube Analytics and Reporting APIs"
+      
+    >
+    
+          Analytics and Reporting APIs
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+  </span>
+
+</div>
+        <div class="devsite-top-logo-row-middle">
+          <div class="devsite-header-upper-tabs">
+            
+           </div>
+          
+<devsite-search
+    enable-signin
+    enable-search
+    enable-suggestions
+      enable-query-completion
+    
+    enable-search-summaries
+    project-name="YouTube Analytics and Reporting APIs"
+    tenant-name="Google for Developers"
+    project-scope="/youtube/analytics"
+    url-scoped="https://developers.google.com/s/results/youtube/analytics"
+    
+    
+    
+    >
+  <form class="devsite-search-form" action="https://developers.google.com/s/results" method="GET">
+    <div class="devsite-search-container">
+      <button type="button"
+              search-open
+              class="devsite-search-button devsite-header-icon-button button-flat material-icons"
+              
+              aria-label="Open search"></button>
+      <div class="devsite-searchbox">
+        <input
+          aria-activedescendant=""
+          aria-autocomplete="list"
+          
+          aria-label="Search"
+          aria-expanded="false"
+          aria-haspopup="listbox"
+          autocomplete="off"
+          class="devsite-search-field devsite-search-query"
+          name="q"
+          
+          placeholder="Search"
+          role="combobox"
+          type="text"
+          value=""
+          >
+          <div class="devsite-search-image material-icons" aria-hidden="true">
+            
+              <svg class="devsite-search-ai-image" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_6641_386)">
+                    <path d="M19.6 21L13.3 14.7C12.8 15.1 12.225 15.4167 11.575 15.65C10.925 15.8833 10.2333 16 9.5 16C7.68333 16 6.14167 15.375 4.875 14.125C3.625 12.8583 3 11.3167 3 9.5C3 7.68333 3.625 6.15 4.875 4.9C6.14167 3.63333 7.68333 3 9.5 3C10.0167 3 10.5167 3.05833 11 3.175C11.4833 3.275 11.9417 3.43333 12.375 3.65L10.825 5.2C10.6083 5.13333 10.3917 5.08333 10.175 5.05C9.95833 5.01667 9.73333 5 9.5 5C8.25 5 7.18333 5.44167 6.3 6.325C5.43333 7.19167 5 8.25 5 9.5C5 10.75 5.43333 11.8167 6.3 12.7C7.18333 13.5667 8.25 14 9.5 14C10.6667 14 11.6667 13.625 12.5 12.875C13.35 12.1083 13.8417 11.15 13.975 10H15.975C15.925 10.6333 15.7833 11.2333 15.55 11.8C15.3333 12.3667 15.05 12.8667 14.7 13.3L21 19.6L19.6 21ZM17.5 12C17.5 10.4667 16.9667 9.16667 15.9 8.1C14.8333 7.03333 13.5333 6.5 12 6.5C13.5333 6.5 14.8333 5.96667 15.9 4.9C16.9667 3.83333 17.5 2.53333 17.5 0.999999C17.5 2.53333 18.0333 3.83333 19.1 4.9C20.1667 5.96667 21.4667 6.5 23 6.5C21.4667 6.5 20.1667 7.03333 19.1 8.1C18.0333 9.16667 17.5 10.4667 17.5 12Z" fill="#5F6368"/>
+                  </g>
+                <defs>
+                <clipPath id="clip0_6641_386">
+                <rect width="24" height="24" fill="white"/>
+                </clipPath>
+                </defs>
+              </svg>
+            
+          </div>
+          <div class="devsite-search-shortcut-icon-container" aria-hidden="true">
+            <kbd class="devsite-search-shortcut-icon">/</kbd>
+          </div>
+      </div>
+    </div>
+  </form>
+  <button type="button"
+          search-close
+          class="devsite-search-button devsite-header-icon-button button-flat material-icons"
+          
+          aria-label="Close search"></button>
+</devsite-search>
+
+        </div>
+
+        
+
+          
+
+          
+
+          
+
+          
+
+          
+<devsite-language-selector>
+  <ul role="presentation">
+    
+    
+    <li role="presentation">
+      <a role="menuitem" lang="en"
+        
+          aria-current="true">English</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="de"
+        >Deutsch</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es"
+        >Español</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es_419"
+        >Español – América Latina</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fr"
+        >Français</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="id"
+        >Indonesia</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="it"
+        >Italiano</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pl"
+        >Polski</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pt_br"
+        >Português – Brasil</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="vi"
+        >Tiếng Việt</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="tr"
+        >Türkçe</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ru"
+        >Русский</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="he"
+        >עברית</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ar"
+        >العربيّة</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fa"
+        >فارسی</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="hi"
+        >हिंदी</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="bn"
+        >বাংলা</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="th"
+        >ภาษาไทย</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_cn"
+        >中文 – 简体</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_tw"
+        >中文 – 繁體</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ja"
+        >日本語</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ko"
+        >한국어</a>
+    </li>
+    
+  </ul>
+</devsite-language-selector>
+
+
+          
+
+        
+
+        
+          <devsite-user signed-in
+                        
+                        
+                          enable-profiles
+                        
+                        
+                          fp-auth
+                        
+                        id="devsite-user">
+            
+          </devsite-user>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="devsite-collapsible-section
+    ">
+    <div class="devsite-header-background">
+      
+        
+      
+      
+        <div class="devsite-doc-set-nav-row">
+          
+          
+            
+            
+  <devsite-tabs class="lower-tabs">
+
+    <nav class="devsite-tabs-wrapper" aria-label="Lower tabs">
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/youtube/analytics"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/youtube/analytics"
+    
+       track-type="nav"
+       track-metadata-position="nav - home"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Home"
+         
+           track-name="home"
+         
+       >
+    Home
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  class="devsite-active">
+            
+    <a href="https://developers.google.com/youtube/reporting"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/youtube/reporting"
+    
+       track-type="nav"
+       track-metadata-position="nav - overview"
+       track-metadata-module="primary nav"
+       aria-label="Overview, selected" 
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Overview"
+         
+           track-name="overview"
+         
+       >
+    Overview
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/youtube/reporting/guides/authorization"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/youtube/reporting/guides/authorization"
+    
+       track-type="nav"
+       track-metadata-position="nav - authorization"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Authorization"
+         
+           track-name="authorization"
+         
+       >
+    Authorization
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/youtube/reporting/v1/reports/full_report_list"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/youtube/reporting/v1/reports/full_report_list"
+    
+       track-type="nav"
+       track-metadata-position="nav - bulk reports"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Bulk Reports"
+         
+           track-name="bulk reports"
+         
+       >
+    Bulk Reports
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/youtube/analytics/data_model"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/youtube/analytics/data_model"
+    
+       track-type="nav"
+       track-metadata-position="nav - targeted queries"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Targeted Queries"
+         
+           track-name="targeted queries"
+         
+       >
+    Targeted Queries
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+        
+          <tab  >
+            
+    <a href="https://developers.google.com/youtube/reporting/v1/code_samples"
+    class="devsite-tabs-content gc-analytics-event "
+      track-metadata-eventdetail="https://developers.google.com/youtube/reporting/v1/code_samples"
+    
+       track-type="nav"
+       track-metadata-position="nav - resources"
+       track-metadata-module="primary nav"
+       
+       
+         
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Tab: Resources"
+         
+           track-name="resources"
+         
+       >
+    Resources
+  
+    </a>
+    
+  
+          </tab>
+        
+      
+    </nav>
+
+  </devsite-tabs>
+
+          
+          
+        </div>
+      
+    </div>
+  </div>
+
+</div>
+
+
+
+  
+</devsite-header>
+        <devsite-book-nav scrollbars hidden>
+          
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="devsite-book-nav-filter"
+     hidden>
+  <span class="filter-list-icon material-icons" aria-hidden="true"></span>
+  <input type="text"
+         placeholder="Filter"
+         
+         aria-label="Type to filter"
+         role="searchbox">
+  
+  <span class="filter-clear-button hidden"
+        data-title="Clear filter"
+        aria-label="Clear filter"
+        role="button"
+        tabindex="0"></span>
+</div>
+
+<nav class="devsite-book-nav devsite-nav nocontent" data-nosnippet
+     aria-label="Side menu">
+  <div class="devsite-mobile-header">
+    <button type="button"
+            id="devsite-close-nav"
+            class="devsite-header-icon-button button-flat material-icons gc-analytics-event"
+            data-category="Site-Wide Custom Events"
+            data-label="Close navigation"
+            aria-label="Close navigation">
+    </button>
+    <div class="devsite-product-name-wrapper">
+
+  
+    
+  
+  <a href="https://developers.google.com/youtube">
+    
+  <div class="devsite-product-logo-container"
+       
+       
+       
+    size="medium"
+  >
+  
+    <picture>
+      
+      <img class="devsite-product-logo"
+           alt="YouTube"
+           src="https://developers.google.com/static/site-assets/logo-youtube.svg"
+           srcset=" /static/site-assets/logo-youtube.svg"
+           sizes="64px"
+           loading="lazy"
+           >
+    </picture>
+  
+  </div>
+  
+  </a>
+  
+
+  
+
+
+  
+      <span class="devsite-product-name">
+        
+        
+        <ul class="devsite-breadcrumb-list"
+  
+    aria-label="Upper header breadcrumb">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+      
+        
+  <a href="https://developers.google.com/youtube"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Upper Header"
+      
+        data-value="1"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="1"
+      
+        track-metadata-eventdetail="YouTube"
+      
+    >
+    
+          YouTube
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/youtube/analytics"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Upper Header"
+      
+        data-value="2"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="2"
+      
+        track-metadata-eventdetail="YouTube Analytics and Reporting APIs"
+      
+    >
+    
+          Analytics and Reporting APIs
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+      </span>
+    
+
+</div>
+  </div>
+
+  <div class="devsite-book-nav-wrapper">
+    <div class="devsite-mobile-nav-top">
+      
+        <ul class="devsite-nav-list">
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/youtube/analytics"
+    
+       class="devsite-nav-title gc-analytics-event
+              
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Home"
+      
+        track-name="home"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Home"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Home
+   </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/youtube/reporting"
+    
+       class="devsite-nav-title gc-analytics-event
+              
+              devsite-nav-active"
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Overview"
+      
+        track-name="overview"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Overview"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Overview
+   </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/youtube/reporting/guides/authorization"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Authorization"
+      
+        track-name="authorization"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Authorization"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Authorization
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/youtube/reporting/v1/reports/full_report_list"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Bulk Reports"
+      
+        track-name="bulk reports"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Bulk Reports"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Bulk Reports
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/youtube/analytics/data_model"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Targeted Queries"
+      
+        track-name="targeted queries"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Targeted Queries"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Targeted Queries
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="/youtube/reporting/v1/code_samples"
+    
+       class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              "
+    
+
+    
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Tab: Resources"
+      
+        track-name="resources"
+      
+    
+     data-category="Site-Wide Custom Events"
+     data-label="Responsive Tab: Resources"
+     track-type="navMenu"
+     track-metadata-eventDetail="globalMenu"
+     track-metadata-position="nav">
+  
+    <span class="devsite-nav-text" tooltip >
+      Resources
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward"
+          >
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+          
+          
+        </ul>
+      
+    </div>
+    
+  </div>
+</nav>
+          
+        </devsite-book-nav>
+      
+      <section id="gc-wrapper">
+        <main role="main" id="main-content" class="devsite-main-content"
+            
+              
+              has-sidebar
+            >
+          <div class="devsite-sidebar">
+            <div class="devsite-sidebar-content">
+                
+                <devsite-toc class="devsite-nav"
+                            role="navigation"
+                            aria-label="On this page"
+                            depth="2"
+                            scrollbars
+                            data-nosnippet
+                  ></devsite-toc>
+                <devsite-recommendations-sidebar class="nocontent devsite-nav" data-nosnippet>
+                </devsite-recommendations-sidebar>
+            </div>
+          </div>
+          <devsite-content>
+            
+              
+
+
+
+
+
+
+
+
+
+
+<article class="devsite-article">
+  
+  
+  
+  
+  
+
+  <div class="devsite-article-meta nocontent" role="navigation" data-nosnippet>
+    
+    
+    <ul class="devsite-breadcrumb-list"
+  
+    aria-label="Breadcrumb">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="1"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="1"
+      
+        track-metadata-eventdetail=""
+      
+    >
+    
+          Home
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/products"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="2"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="2"
+      
+        track-metadata-eventdetail=""
+      
+    >
+    
+          Products
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/youtube"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="3"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="3"
+      
+        track-metadata-eventdetail="YouTube"
+      
+    >
+    
+          YouTube
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/youtube/analytics"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="4"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="4"
+      
+        track-metadata-eventdetail="YouTube Analytics and Reporting APIs"
+      
+    >
+    
+          Analytics and Reporting APIs
+        
+  </a>
+  
+      
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+        
+  <a href="https://developers.google.com/youtube/reporting"
+      
+        class="devsite-breadcrumb-link gc-analytics-event"
+      
+        data-category="Site-Wide Custom Events"
+      
+        data-label="Breadcrumbs"
+      
+        data-value="5"
+      
+        track-type="globalNav"
+      
+        track-name="breadcrumb"
+      
+        track-metadata-position="5"
+      
+        track-metadata-eventdetail=""
+      
+    >
+    
+          Overview
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+    
+      
+    <devsite-thumb-rating position="header">
+    </devsite-thumb-rating>
+  
+    
+  </div>
+  
+    <h1 class="devsite-page-title" tabindex="-1">
+      Introduction<devsite-actions hidden data-nosnippet><devsite-feature-tooltip
+      ack-key="AckCollectionsBookmarkTooltipDismiss"
+      analytics-category="Site-Wide Custom Events"
+      analytics-action-show="Callout Profile displayed"
+      analytics-action-close="Callout Profile dismissed"
+      analytics-label="Create Collection Callout"
+      class="devsite-page-bookmark-tooltip nocontent"
+      data-nosnippet
+      dismiss-button="true"
+      id="devsite-collections-dropdown"
+      
+      dismiss-button-text="Dismiss"
+
+      
+      close-button-text="Got it">
+
+    
+    
+      <devsite-bookmark></devsite-bookmark>
+    
+
+    <span slot="popout-heading">
+      
+      Stay organized with collections
+    </span>
+    <span slot="popout-contents">
+      
+      Save and categorize content based on your preferences.
+    </span>
+  </devsite-feature-tooltip>
+    <devsite-llm-tools></devsite-llm-tools></devsite-actions>
+  
+      
+    </h1>
+  <div class="devsite-page-title-meta"><devsite-view-release-notes></devsite-view-release-notes></div>
+  
+
+  <devsite-toc class="devsite-nav"
+    depth="2"
+    devsite-toc-embedded
+    >
+  </devsite-toc>
+  <div class="devsite-article-body clearfix
+  ">
+
+  
+    
+      <devsite-key-takeaways-panel role="region" aria-labelledby="key-takeaways-panel-title">
+  <div class="devsite-key-takeaways-panel-header" aria-labelledby="key-takeaways-panel-title" aria-expanded="false" role="button" tabindex="0">
+    
+    <img src="/_static/images/icons/spark.svg" alt="Spark icon" />
+    <div class="devsite-key-takeaways-panel-title">
+      
+      <h2 class="no-link hide-from-toc" id="key-takeaways-panel-title" data-tooltip="Generated with AI">Page Summary</h2>
+    </div>
+    <span
+      class="material-icons devsite-key-takeaways-panel-toggle-button" aria-hidden="true"></span>
+  </div>
+  <div class="devsite-key-takeaways-panel-content">
+    <devsite-feedback
+      product-id="5123748"
+      bucket="8963846920012181156"
+      disable-product-feedback>
+      <button
+        class="button-flat button-primary devsite-key-takeaways-report-button"
+        
+        data-title="Report Key Takeaways!"
+        
+        aria-label="Report Key Takeaways!">
+        <span
+          class="material-icons"
+          
+          aria-label="Report Key Takeaways!"
+          >outlined_flag</span
+        >
+      </button>
+    </devsite-feedback>
+    <ul class="devsite-key-takeaways-panel-list">
+      
+        <li>
+          <p>The YouTube Analytics API and YouTube Reporting API both provide access to YouTube Analytics data, supporting channel and content owner reports with metrics on user activity, ad performance, and revenue.</p>
+
+        </li>
+      
+        <li>
+          <p>The YouTube Analytics API is designed for real-time, targeted queries, allowing for custom report generation with built-in filtering and sorting, while also offering the retrieval of weekly and monthly data sets.</p>
+
+        </li>
+      
+        <li>
+          <p>The YouTube Reporting API is intended for bulk data retrieval, where applications download large predefined data sets and handle filtering and sorting internally, in addition it also provides system-managed reports which provide access to ad revenue data.</p>
+
+        </li>
+      
+        <li>
+          <p>While both APIs offer similar data types, the specific reports, dimensions, and metrics available vary, with the YouTube Reporting API providing unique access to subtitle-related data, playlist audience retention, asset reports and various revenue metrics.</p>
+
+        </li>
+      
+        <li>
+          <p>The APIs differ in their data retrieval processes, with the YouTube Analytics API using direct requests and the Reporting API relying on scheduled jobs and asynchronous downloads, and also using distinct naming conventions for dimensions and metrics, using camelCase in the Analytics API and lowercase with underscores in the Reporting API.</p>
+
+        </li>
+      
+    </ul>
+  </div>
+</devsite-key-takeaways-panel>
+    
+    
+    <div itemscope itemtype="http://developers.google.com/ReferenceObject">
+    <meta itemprop="name" content="YouTube Reporting API Reference"/>
+
+<p>This document explains similarities and differences in the ways that the YouTube Analytics API and YouTube Reporting API provide access to YouTube Analytics data, so that you choose the right API for your application.</p>
+
+<p>Both APIs let you to retrieve YouTube Analytics data. In addition, both APIs support YouTube channel owners and YouTube content owners, each of whom can access a specific set of reports:</p>
+
+<ul>
+  <li>
+    <p><b>Channel reports</b> contain user activity metrics for a specified channel.</p>
+  </li>
+  <li>
+    <p><b>Content owner reports</b> aggregate metrics for all of the channels linked to a specified YouTube content owner. For example, a record label could retrieve a report containing combined statistics for the YouTube channels of all of the label's artists. Some content owner reports contain user activity metrics, while others contain metrics related to revenue and ad performance.</p>
+  </li>
+</ul>
+
+<p>The Reporting API also allows some content owners to access system-managed ad revenue reports. The data in the system-managed reports can only be retrieved with the Reporting API.</p>
+
+<p>All YouTube Analytics and YouTube Reporting API requests must be authorized by the channel or content owner that owns the requested data.</p>
+
+<h2 id="Report_Contents" data-text="Report contents" tabindex="-1">Report contents</h2>
+
+<p>The reports that the APIs retrieve contain two types of data:</p>
+
+<ul>
+  <li>
+    <p><strong>Dimensions</strong> are common criteria that are used to aggregate data, such as the date on which the user activity occurred or the country where the users were located.</p>
+    <p>In a report, each row of data has a unique combination of dimension values. As such, each row's combination of dimension values functions as the primary key for that row.</p>
+  </li>
+  <li>
+    <p><strong>Metrics</strong> are individual measurements of user activity, ad performance, or estimated revenue. User activity metrics include things like video view counts and ratings (likes and dislikes).</p>
+  </li>
+</ul>
+
+<h2 id="choose-the-right-api-for-your-application" data-text="Choose the right API for your application" tabindex="-1">Choose the right API for your application</h2>
+
+<h3 id="youtube-analytics-api" data-text="YouTube Analytics API" tabindex="-1">YouTube Analytics API</h3>
+
+<p>The <strong>YouTube Analytics API</strong> supports real-time <strong>targeted queries</strong> to generate custom YouTube Analytics reports. The API provides filtering and sorting parameters, so the calling application does not need to natively support these functions.</p>
+<p>Each API request specifies the date range for which data will be returned. The API also lets you to retrieve weekly and monthly data sets. As such, the calling application does not need to store retrieved data sets or aggregate statistics across date ranges.</p>
+
+<h3 id="youtube-reporting-api" data-text="YouTube Reporting API" tabindex="-1">YouTube Reporting API</h3>
+
+<p>The <strong>YouTube Reporting API</strong> retrieves <strong>bulk reports</strong> containing YouTube Analytics data for a channel or content owner. It is designed for high-volume applications that require bulk datasets and large-scale exports, providing exclusive access to your specific Content Owner data.</p>
+<p>Each report contains a predefined set of fields. You use the API to schedule reporting jobs, each of which identifies a report that YouTube should generate. YouTube then generates a daily report that can be asynchronously downloaded. Each report contains data for a unique 24-hour period.</p>
+
+<p>The YouTube Reporting API supports the following types of reports:</p>
+
+<table class="responsive">
+  <thead>
+    <tr>
+      <th style="width: 25%">Report type</th>
+      <th style="width: 75%">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2" style="background-color: #f8f9fa; font-weight: bold;">Financial and Revenue Reports</td>
+    </tr>
+    <tr>
+      <td>Ad revenue</td>
+      <td>Monthly/Weekly summaries of ad revenue.<br>
+          <b>Examples:</b>
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/system_managed/ads#aggregate-ad-revenue-per-video">content_owner_ad_revenue_summary_a1</a></code>,
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/content_owner_reports#estimated-revenue-videos">content_owner_estimated_revenue_a1</a></code></td>
+    </tr>
+    <tr>
+      <td>Subscription revenue</td>
+      <td>Subscription revenue for music labels and publishers.<br>
+          <b>Examples:</b>
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/system_managed/subscriptions#monthly-music-label-video-revenue">music_content_owner_red_revenue_raw_a1</a></code>,
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/system_managed/subscriptions#monthly-subscriptions-music-assets-revenue">content_owner_music_asset_red_revenue_raw_a1</a></code></td>
+    </tr>
+    <tr>
+      <td>Shorts revenue</td>
+      <td>Specific pools for your specific Content Owner Shorts monetization.<br>
+          <b>Examples:</b>
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/system_managed/shorts#monthly-youtube-shorts-music-label-content-owner-revenue-summary">music_content_owner_shorts_revenue_summary_a1</a></code></td>
+    </tr>
+    <tr>
+      <td colspan="2" style="background-color: #f8f9fa; font-weight: bold;">Content Owner and Asset Reports</td>
+    </tr>
+    <tr>
+      <td>Asset performance</td>
+      <td>Views and engagement linked to specific assets (ISRCs/UPCs), designed for rights holders to track performance across all owned channels.<br>
+          <b>Examples:</b>
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/content_owner_reports#asset-user-activity">content_owner_asset_basic_a3</a></code>,
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/content_owner_reports#asset-viewer-demographics">content_owner_asset_demographics_a1</a></code></td>
+    </tr>
+    <tr>
+      <td>Claims and references</td>
+      <td>Tracks active claims, potential conflicts, and reference overlaps, designed for rights holders to track performance across all owned channels.<br>
+          <b>Examples:</b>
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/system_managed/claims#daily-claims-version-1.2">content_owner_active_claims_a3</a></code>,
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/system_managed/assets#daily-asset-conflicts-version-1.3">content_owner_asset_conflict_a3</a></code></td>
+    </tr>
+    <tr>
+      <td colspan="2" style="background-color: #f8f9fa; font-weight: bold;">Video and Playlist Analytics</td>
+    </tr>
+    <tr>
+      <td>Video and playlist analytics</td>
+      <td>Granular performance data for specific videos or playlists, such as traffic sources, device type/OS, playback locations, and viewer demographics.<br>
+          <b>Examples:</b>
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/channel_reports#video-traffic-sources">channel_traffic_source_a3</a></code>,
+          <code translate="no" dir="ltr"><a href="/youtube/reporting/v1/reports/channel_reports#playlist-device-type-and-operating-system">playlist_device_os_a2</a></code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In addition, YouTube automatically generates a set of system-managed reports for content owners that have access to the corresponding reports in <a href="https://studio.youtube.com">YouTube Creator Studio</a>. These reports provide programmatic access to ad revenue data.</p>
+
+
+
+<h2 id="supported-reports" data-text="Supported reports" tabindex="-1">Supported reports</h2>
+
+<p>The following table identifies the different types of reports you can retrieve using the APIs. Targeted queries are available using the YouTube Analytics API, and bulk reports are available using the YouTube Reporting API.</p>
+
+<p>Data that is available in one API might not be available in the other. For example, the YouTube Analytics API lets you retrieve user activity metrics on a weekly or monthly basis, but the YouTube Reporting API requires you to aggregate that data yourself. On the other hand, the YouTube Reporting API supports asset reports for content owners, but that data is not available from the YouTube Analytics API.</p>
+
+<table class="responsive details">
+  <thead>
+    <tr>
+      <th style="width: 25%">Report type</th>
+      <th style="width: 75%">Details</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Video reports</td>
+      <td>Supported for channels (<a href="/youtube/analytics/v1/channel_reports#video-reports">query</a> or <a href="/youtube/reporting/v1/reports/channel_reports#video-reports">bulk</a>) and content owners (<a href="/youtube/analytics/v1/content_owner_reports#video-reports">query</a> or <a href="/youtube/reporting/v1/reports/content_owner_reports#video-reports">bulk</a>).<br><br>
+          Video reports provide statistics for all user activity related to a channel's videos or a content owner's videos. For example, these reports contain the number of views that your videos received. In the YouTube Analytics API, some content owner video reports also include estimated revenue and ad performance metrics.</td>
+    </tr>
+    <tr>
+      <td>Reach reports</td>
+      <td>Supported for channels (<a href="/youtube/reporting/v1/reports/channel_reports#reach-reports">bulk</a>) and content owners (<a href="/youtube/reporting/v1/reports/content_owner_reports#reach-reports">bulk</a>).<br><br>
+          Reach reports provide statistics for video thumbnail impressions and click-through rates.</td>
+    </tr>
+    <tr>
+      <td>Playlist reports</td>
+      <td>Supported for channels (<a href="/youtube/analytics/v1/channel_reports#playlist-reports">query</a> or <a href="/youtube/reporting/v1/reports/channel_reports#playlist-reports">bulk</a>) and content owners (<a href="/youtube/analytics/v1/content_owner_reports#playlist-reports">query</a> or <a href="/youtube/reporting/v1/reports/content_owner_reports#playlist-reports">bulk</a>).<br><br>
+          Playlist reports provide statistics that are specifically related to video views that occur in the context of a playlist. The YouTube Reporting API supports audience retention reports for playlists, but the YouTube Analytics API does not support a similar report.</td>
+    </tr>
+    <tr>
+      <td>Ad performance reports</td>
+      <td>Supported for content owners (<a href="/youtube/analytics/v1/content_owner_reports#ad-performance-reports">query</a> or <a href="/youtube/reporting/v1/reports/content_owner_reports#ad-performance-reports">bulk</a>).<br><br>
+          Ad performance reports provide impression-based metrics for ads that ran during video playbacks. These metrics account for each ad impression, and each video playback can yield multiple impressions.</td>
+    </tr>
+    <tr>
+      <td>Estimated revenue reports</td>
+      <td>Supported for content owners (<a href="/youtube/reporting/v1/reports/content_owner_reports#estimated-revenue-reports">bulk</a>).<br><br>
+          Estimated revenue reports provide the total <i>estimated</i> revenue for videos from Google-sold advertising sources and from non-advertising sources. These reports also contain some ad performance metrics. Note that <a href="/youtube/reporting/v1/reports/system_managed">system-managed reports</a> contain actual revenue.</td>
+    </tr>
+    <tr>
+      <td>Asset reports</td>
+      <td>Supported for content owners (<a href="/youtube/reporting/v1/reports/content_owner_reports#asset-reports">bulk</a>).<br><br>
+          Asset reports provide user activity metrics related to videos that are linked to a content owner's assets. A video is included in a content owner's report if the content owner has claimed that video as a match of one of the content owner's assets. The video could have been uploaded by the content owner or by another YouTube user.</td>
+    </tr>
+    <tr>
+      <td>System-managed reports</td>
+      <td>Supported for content owners who have access to the corresponding reports in the <a href="https://support.google.com/youtube/answer/7648605">Reports menu</a> of YouTube's Creator Studio.<br><br>
+          System-managed reports provide actual revenue data earned by assets and videos. An additional report lists claimed videos and the assets those videos match. Not all Creator Studio reports are available in the API.<br><br><b>Note:</b> YouTube automatically generates system-managed reports for content owners that have access to the corresponding reports in Creator Studio. As a result, the process for retrieving these reports is different than for the other types of reports in this list. See the documentation for <a href="/youtube/reporting/v1/reports/system_managed">system-managed reports</a> for more information.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="key-differences" data-text="Key differences" tabindex="-1">Key differences</h2>
+
+<p>The following table highlights important differences between the YouTube Analytics and Reporting APIs.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 20%">Feature</th>
+      <th style="width: 40%">YouTube Analytics API</th>
+      <th style="width: 40%">YouTube Reporting API</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Process&nbsp;to retrieve&nbsp;data</td>
+    <td>Each API request specifies dimensions and metrics to be returned as well as the time period for which data will be returned.</td>
+    <td>Applications schedule reporting jobs. For each job, YouTube generates daily reports that can be asynchronously downloaded.</td>
+  </tr>
+  <tr>
+    <td>Date Ranges</td>
+    <td>Some API reports specify the date that user activity occurred. Some of those reports support dimensions to aggregate user activity metrics by month.</td>
+    <td>All API reports specify the day that user activity occurred. Applications using the API can implement features to aggregate data for periodic intervals.</td>
+  </tr>
+  <tr>
+    <td>Filtering&nbsp;data</td>
+    <td>You can filter reports to include only rows for which a dimension has a specific value. The API also supports some dimensions, like <a href="/youtube/analytics/v1/dimsmets/dims#continent">continent</a> and <a href="/youtube/analytics/v1/dimsmets/dims#subContinent">subContinent</a>, that are used only as filters.</td>
+    <td>The API supports bulk downloads of complete data sets. It does not support filtering or return data for filter-only dimensions. The client application stores the downloaded data and implements its own features to filter the data.</td>
+  </tr>
+  <tr>
+    <td>Sorting</td>
+    <td>Reports can be sorted based on returned metric values. Some reports support only a limited number of results. For example, the report that lists a channel's most viewed videos returns a maximum of 200 rows.</td>
+    <td>This API supports bulk downloads of complete data sets. Client applications can implement their own features to sort downloaded data.</td>
+  </tr>
+  <tr>
+    <td>Enumerations</td>
+    <td>API reports contain text values, like "ANDROID" or "CHANNEL," to identify enumerated dimension values.</td>
+    <td>API reports contain integers that can be mapped to text values.</td>
+  </tr>
+  <tr>
+    <td>Quota</td>
+    <td>The API server evaluates each query to determine its quota cost. The <a href="/youtube/analytics/data_model#quota-usage">quota usage</a> section explains the methodology in more detail.</td>
+    <td>Quota usage is not an issue because data is retrieved once and then filtered, sorted, and queried within the application.</td>
+  </tr>
+  <tr>
+    <td>Unique&nbsp;reports</td>
+    <td><span class="compare-no"></span></td>
+    <td>
+      <ul style="padding-left: 15px">
+
+
+        <li>User activity related to subtitles</li>
+        <li>Audience retention data for playlists</li>
+        <li>Estimated revenue reports for content owners (2 different reports are available)</li>
+        <li>Asset reports for content owners (11 different reports are available)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Unique dimensions</td>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#group">group</a> (filter-only dimension)<br>
+        <a href="/youtube/analytics/v1/dimsmets/dims#continent">continent</a> (filter-only dimension)<br>
+        <a href="/youtube/analytics/v1/dimsmets/dims#subContinent">subContinent</a> (filter-only dimension)<br>
+        <a href="/youtube/analytics/v1/dimsmets/dims#month">month</a><br>
+        <a href="/youtube/analytics/v1/dimsmets/mets#viewsPerPlaylistStart">viewsPerPlaylistStart</a><br>
+        <a href="/youtube/analytics/v1/dimsmets/mets#averageTimeInPlaylist">averageTimeInPlaylist</a>
+    </td>
+    <td>
+        <a href="/youtube/reporting/v1/reports/dimensions#annotation_id">annotation_id</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#annotation_type">annotation_type</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#asset_id">asset_id</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_id">card_id</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_type">card_type</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#live_or_on_demand">live_or_on_demand</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#subscribed_status">subscribed_status</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#subtitle_language">subtitle_language</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Unique metrics</td>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#uniques">uniques</a><br>
+        <a href="/youtube/analytics/v1/dimsmets/mets#relativeRetentionPerformance">relativeRetentionPerformance</a><br>
+        <a href="/youtube/analytics/v1/dimsmets/mets#viewsPerPlaylistStart">viewsPerPlaylistStart</a><br>
+        <a href="/youtube/analytics/v1/dimsmets/mets#averageTimeInPlaylist">averageTimeInPlaylist</a><br>
+    </td>
+    <td>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_click_rate">card_click_rate</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_clicks">card_clicks</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_impressions">card_impressions</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_teaser_click_rate">card_teaser_click_rate</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_teaser_clicks">card_teaser_clicks</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#card_teaser_impressions">card_teaser_impressions</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#estimated_partner_adsense_revenue">estimated_partner_adsense_revenue</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#estimated_partner_doubleclick_revenue">estimated_partner_doubleclick_revenue</a>
+<a href="/youtube/reporting/v1/reports/dimensions#playlist_saves_added">playlist_saves_added</a><br>
+        <a href="/youtube/reporting/v1/reports/dimensions#playlist_saves_removed">playlist_saves_removed</a><br>
+
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h3 id="naming-differences-between-apis" data-text="Naming differences between APIs" tabindex="-1">Naming differences between APIs</h3>
+
+<p>The two APIs use different naming conventions to identify dimensions and metrics. YouTube Analytics API names use camelCase, like <code translate="no" dir="ltr">adType</code>. YouTube Reporting API names are in lowercase and use underscores, like <code translate="no" dir="ltr">ad_type</code>.</p>
+
+<p>The following tables identify the different names that the two APIs use to identify the same metrics and dimensions. In some cases, the difference between the two names is more than what you would get after converting a name from camelCase to underscores. For example, the <code translate="no" dir="ltr">video</code> dimension in the YouTube Analytics API is named <code translate="no" dir="ltr">video_id</code> in the YouTube Reporting API.</p>
+
+<h4 id="dimensions" data-text="Dimensions" tabindex="-1">Dimensions</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>YouTube Analytics API name</th>
+      <th>YouTube Reporting API name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#adType">adType</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#ad_type">ad_type</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#ageGroup">ageGroup</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#age_group">age_group</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#asset">asset</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#asset_id">asset_id</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#audienceType">audienceType</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#audience_retention_type">audience_retention_type</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#channel">channel</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#channel_id">channel_id</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#claimedStatus">claimedStatus</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#claimed_status">claimed_status</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#contentOwner">contentOwner</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#Content_Owner_Dimensions">content_owner_id</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#country">country</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#country_code">country_code</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#day">day</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#date">date</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#deviceType">deviceType</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#device_type">device_type</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#elapsedVideoTimeRatio">elapsedVideoTimeRatio</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#elapsed_video_time_percentage">elapsed_video_time_percentage</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#gender">gender</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#gender">gender</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#insightPlaybackLocationDetail">insightPlaybackLocationDetail</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#playback_location_detail">playback_location_detail</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#Playback_Location_Dimensions">insightPlaybackLocationType</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#playback_location_type">playback_location_type</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#insightTrafficSourceDetail">insightTrafficSourceDetail</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#traffic_source_detail">traffic_source_detail</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#Traffic_Source_Dimensions">insightTrafficSourceType</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#traffic_source_type">traffic_source_type</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#liveOrOnDemand">liveOrOnDemand</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#live_or_on_demand">live_or_on_demand</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#operatingSystem">operatingSystem</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#operating_system">operating_system</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#playlist">playlist</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#playlist_id">playlist_id</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#province">province</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#province_code">province_code</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#sharingService">sharingService</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#sharing_service">sharing_service</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#subscribedStatus">subscribedStatus</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#subscribed_status">subscribed_status</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#subtitleLanguage">subtitleLanguage</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#subtitle_language">subtitle_language</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#uploaderType">uploaderType</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#uploader_type">uploader_type</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/dims#video">video</a></td>
+    <td><a href="/youtube/reporting/v1/reports/dimensions#video_id">video_id</a></td>
+  </tr>
+  </tbody>
+</table>
+
+<h4 id="metrics" data-text="Metrics" tabindex="-1">Metrics</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>YouTube Analytics API name</th>
+      <th>YouTube Reporting API name</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#adImpressions">adImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#ad_impressions">ad_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationClickableImpressions">annotationClickableImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_clickable_impressions">annotation_clickable_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationClicks">annotationClicks</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_clicks">annotation_clicks</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationClickThroughRate">annotationClickThroughRate</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_click_through_rate">annotation_click_through_rate</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationClosableImpressions">annotationClosableImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_closable_impressions">annotation_closable_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationCloses">annotationCloses</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_closes">annotation_closes</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationCloseRate">annotationCloseRate</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_close_rate">annotation_close_rate</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#annotationImpressions">annotationImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#annotation_impressions">annotation_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#audienceWatchRatio">audienceWatchRatio</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#audience_retention_percentage">audience_retention_percentage</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#averageViewDuration">averageViewDuration</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#average_view_duration_seconds">average_view_duration_seconds</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#averageViewPercentage">averageViewPercentage</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#average_view_duration_percentage">average_view_duration_percentage</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cardClickRate">cardClickRate</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#card_click_rate">card_click_rate</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cardClicks">cardClicks</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#card_clicks">card_clicks</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cardImpressions">cardImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#card_impressions">card_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cardTeaserClickRate">cardTeaserClickRate</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#card_teaser_click_rate">card_teaser_click_rate</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cardTeaserClicks">cardTeaserClicks</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#card_teaser_clicks">card_teaser_clicks</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cardTeaserImpressions">cardTeaserImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#card_teaser_impressions">card_teaser_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#comments">comments</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#comments">comments</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#cpm">cpm</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#estimated_cpm">estimated_cpm</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#dislikes">dislikes</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#dislikes">dislikes</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#estimatedAdRevenue">estimatedAdRevenue</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#estimated_partner_ad_revenue">estimated_partner_ad_revenue</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#estimatedMinutesWatched">estimatedMinutesWatched</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#watch_time_minutes">watch_time_minutes</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#estimatedRevenue">estimatedRevenue</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#estimated_partner_revenue">estimated_partner_revenue</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#grossRevenue">grossRevenue</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#estimated_youtube_ad_revenue">estimated_youtube_ad_revenue</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#likes">likes</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#likes">likes</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#monetizedPlaybacks">monetizedPlaybacks</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#estimated_monetized_playbacks">estimated_monetized_playbacks</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#playbackBasedCpm">playbackBasedCpm</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#estimated_playback_based_cpm">estimated_playback_based_cpm</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#playlistStarts">playlistStarts</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#playlist_starts">playlist_starts</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#savesAdded">savesAdded</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#playlist_saves_added">playlist_saves_added</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#savesRemoved">savesRemoved</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#playlist_saves_removed">playlist_saves_removed</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#shares">shares</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#shares">shares</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#subscribersGained">subscribersGained</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#subscribers_gained">subscribers_gained</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#subscribersLost">subscribersLost</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#subscribers_lost">subscribers_lost</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#videosAddedToPlaylists">videosAddedToPlaylists</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#videos_added_to_playlists">videos_added_to_playlists</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#videosRemovedFromPlaylists">videosRemovedFromPlaylists</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#videos_removed_from_playlists">videos_removed_from_playlist</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#viewerPercentage">viewerPercentage</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#views_percentage">views_percentage</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#views">views</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#views">views</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#videoThumbnailImpressions">videoThumbnailImpressions</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#video_thumbnail_impressions">video_thumbnail_impressions</a></td>
+  </tr>
+  <tr>
+    <td><a href="/youtube/analytics/v1/dimsmets/mets#videoThumbnailImpressionsClickRate">videoThumbnailImpressionsClickRate</a></td>
+    <td><a href="/youtube/reporting/v1/reports/metrics#video_thumbnail_impressions_ctr">video_thumbnail_impressions_ctr</a></td>
+  </tr>
+  </tbody>
+</table>
+
+    </div>
+  
+  
+
+  
+</div>
+
+  
+    
+      <devsite-recommendations display="in-page" hidden yield>
+      </devsite-recommendations>
+    
+    
+      
+    <devsite-thumb-rating position="footer">
+    </devsite-thumb-rating>
+  
+       
+    
+    
+      <devsite-recommendations id="recommendations-link" yield></devsite-recommendations>
+    
+  
+
+  <div class="devsite-floating-action-buttons"></div></article>
+
+
+<devsite-content-footer class="nocontent" data-nosnippet>
+  <p>Except as otherwise noted, the content of this page is licensed under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 License</a>, and code samples are licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. For details, see the <a href="https://developers.google.com/site-policies">Google Developers Site Policies</a>. Java is a registered trademark of Oracle and/or its affiliates.</p>
+  <p>Last updated 2026-09-14 UTC.</p>
+</devsite-content-footer>
+
+
+<devsite-notification
+>
+</devsite-notification>
+
+
+  
+<div class="devsite-content-data">
+  
+  
+    <template class="devsite-content-data-template">
+      [[["Easy to understand","easyToUnderstand","thumb-up"],["Solved my problem","solvedMyProblem","thumb-up"],["Other","otherUp","thumb-up"]],[["Missing the information I need","missingTheInformationINeed","thumb-down"],["Too complicated / too many steps","tooComplicatedTooManySteps","thumb-down"],["Out of date","outOfDate","thumb-down"],["Samples / code issue","samplesCodeIssue","thumb-down"],["Other","otherDown","thumb-down"]],["Last updated 2026-09-14 UTC."],[],["The YouTube Analytics API and Reporting API both offer access to YouTube data, for channel and content owners. The Analytics API provides real-time, targeted queries for custom reports, with filtering and sorting options. The Reporting API retrieves bulk, daily reports for large-scale data analysis, requiring client-side filtering and sorting. Both APIs use dimensions and metrics to aggregate data, however, the Reporting API can retrieve ad revenue data, whereas the Analytics API does not.\n"]]
+    </template>
+  
+</div>
+            
+          </devsite-content>
+        </main>
+        <devsite-footer-promos class="devsite-footer">
+          
+            
+
+<nav class="devsite-footer-promos nocontent"
+     aria-label="Promotions"
+     data-nosnippet>
+  <ul class="devsite-footer-promos-list">
+    
+    <li class="devsite-footer-promo">
+      <a href="https://blog.youtube"
+         class="devsite-footer-promo-title gc-analytics-event"
+         data-category="Site-Wide Custom Events"
+       
+         
+         data-label="Footer Promo Link (index 1)"
+       
+       >
+        
+        
+        <picture>
+          
+          <img class="devsite-footer-promo-icon"
+                src="/static/site-assets/logo-youtube.svg"
+                loading="lazy"
+                alt="Blog">
+        </picture>
+        
+        <span class="devsite-footer-promo-label">
+          Blog
+        </span>
+      </a>
+      <div class="devsite-footer-promo-description">The latest news on the YouTube blog</div>
+    </li>
+    
+    <li class="devsite-footer-promo">
+      <a href="https://issuetracker.google.com/issues/new?component=186600&amp;template=874803"
+         class="devsite-footer-promo-title gc-analytics-event"
+         data-category="Site-Wide Custom Events"
+       
+         
+         data-label="Footer Promo Link (index 2)"
+       
+       >
+        
+        
+        <picture>
+          
+          <img class="devsite-footer-promo-icon"
+                src="/static/site-assets/developers_64dp.png"
+                loading="lazy"
+                alt="Issue Tracker">
+        </picture>
+        
+        <span class="devsite-footer-promo-label">
+          Issue Tracker
+        </span>
+      </a>
+      <div class="devsite-footer-promo-description">Something wrong? Send us a bug report!</div>
+    </li>
+    
+    <li class="devsite-footer-promo">
+      <a href="https://research.youtube/"
+         class="devsite-footer-promo-title gc-analytics-event"
+         data-category="Site-Wide Custom Events"
+       
+         
+         data-label="Footer Promo Link (index 3)"
+       
+       >
+        
+        
+        <picture>
+          
+          <img class="devsite-footer-promo-icon"
+                src="/static/site-assets/logo-youtube.svg"
+                loading="lazy"
+                alt="YouTube Researcher Program">
+        </picture>
+        
+        <span class="devsite-footer-promo-label">
+          YouTube Researcher Program
+        </span>
+      </a>
+      <div class="devsite-footer-promo-description">For researchers interested in using data from YouTube&#39;s global API</div>
+    </li>
+    
+  </ul>
+</nav>
+
+          
+        </devsite-footer-promos>
+        <devsite-footer-linkboxes class="devsite-footer">
+          
+            
+<nav class="devsite-footer-linkboxes nocontent"
+     aria-label="Footer links"
+     data-nosnippet>
+  
+  <ul class="devsite-footer-linkboxes-list">
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Tools</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://developers.google.com/apis-explorer/#p/"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 1)"
+            >
+            
+          
+            Google APIs Explorer
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/youtube/youtube_player_demo"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 2)"
+            >
+            
+          
+            YouTube Player Demo
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/youtube/youtube_subscribe_button"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 3)"
+            >
+            
+              
+              
+            
+          
+            Configure a Subscribe Button
+          
+          </a>
+          
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Issue Tracker</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://issuetracker.google.com/issues/new?component=186600&amp;template=874803"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 1)"
+            >
+            
+          
+            File a bug
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://issuetracker.google.com/issues/new?component=186600&amp;template=874803"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 2)"
+            >
+            
+          
+            Request a feature
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://issuetracker.google.com/issues?q=componentid:186600"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 3)"
+            >
+            
+              
+              
+            
+          
+            See open issues
+          
+          </a>
+          
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Product Info</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/youtube/terms/api-services-terms-of-service"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 1)"
+            >
+            
+          
+            Terms of Service
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/youtube/terms/developer-policies"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 2)"
+            >
+            
+          
+            Developer Policies
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/youtube/terms/required-minimum-functionality"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 3)"
+            >
+            
+          
+            Required Minimum Functionality
+          
+          </a>
+          
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="/youtube/terms/branding-guidelines"
+             class="devsite-footer-linkbox-link gc-analytics-event"
+             data-category="Site-Wide Custom Events"
+            
+             data-label="Footer Link (index 4)"
+            >
+            
+              
+              
+            
+          
+            Branding Guidelines
+          
+          </a>
+          
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+  </ul>
+  
+</nav>
+          
+        </devsite-footer-linkboxes>
+        <devsite-footer-utility class="devsite-footer">
+          
+            
+
+<div class="devsite-footer-utility nocontent" data-nosnippet>
+  
+  
+  <nav class="devsite-footer-sites" aria-label="Other Google Developers websites">
+    <a href="https://developers.google.com/"
+       class="devsite-footer-sites-logo-link gc-analytics-event"
+       data-category="Site-Wide Custom Events"
+       data-label="Footer Google Developers Link">
+      <picture>
+        
+        <img class="devsite-footer-sites-logo"
+             src="https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/images/lockup-google-for-developers.svg"
+             loading="lazy"
+             alt="Google Developers">
+      </picture>
+    </a>
+    <ul class="devsite-footer-sites-list">
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//developer.android.com"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Android Link"
+         
+         >
+          Android
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//developer.chrome.com/home"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Chrome Link"
+         
+         >
+          Chrome
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//firebase.google.com"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Firebase Link"
+         
+         >
+          Firebase
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//cloud.google.com"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Google Cloud Platform Link"
+         
+         >
+          Google Cloud Platform
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="//ai.google.dev/"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer Google AI Link"
+         
+         >
+          Google AI
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="/products"
+           class="devsite-footer-sites-link
+                  gc-analytics-event"
+           data-category="Site-Wide Custom Events"
+         
+           data-label="Footer All products Link"
+         
+         >
+          All products
+        </a>
+      </li>
+      
+    </ul>
+  </nav>
+  
+
+  
+  <nav class="devsite-footer-utility-links" aria-label="Utility links">
+    
+    <ul class="devsite-footer-utility-list">
+      
+      <li class="devsite-footer-utility-item
+                 ">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event"
+           href="/terms/site-terms"
+           data-category="Site-Wide Custom Events"
+           data-label="Footer Terms link"
+         >
+          Terms
+        </a>
+        
+      </li>
+      
+      <li class="devsite-footer-utility-item
+                 ">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event"
+           href="//policies.google.com/privacy"
+           data-category="Site-Wide Custom Events"
+           data-label="Footer Privacy link"
+         >
+          Privacy
+        </a>
+        
+      </li>
+      
+      <li class="devsite-footer-utility-item
+                 glue-cookie-notification-bar-control">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event"
+           href="#"
+           data-category="Site-Wide Custom Events"
+           data-label="Footer Manage cookies link"
+         
+           aria-hidden="true"
+         >
+          Manage cookies
+        </a>
+        
+      </li>
+      
+    </ul>
+    
+    
+<devsite-language-selector>
+  <ul role="presentation">
+    
+    
+    <li role="presentation">
+      <a role="menuitem" lang="en"
+        
+          aria-current="true">English</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="de"
+        >Deutsch</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es"
+        >Español</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="es_419"
+        >Español – América Latina</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fr"
+        >Français</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="id"
+        >Indonesia</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="it"
+        >Italiano</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pl"
+        >Polski</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="pt_br"
+        >Português – Brasil</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="vi"
+        >Tiếng Việt</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="tr"
+        >Türkçe</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ru"
+        >Русский</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="he"
+        >עברית</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ar"
+        >العربيّة</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="fa"
+        >فارسی</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="hi"
+        >हिंदी</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="bn"
+        >বাংলা</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="th"
+        >ภาษาไทย</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_cn"
+        >中文 – 简体</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="zh_tw"
+        >中文 – 繁體</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ja"
+        >日本語</a>
+    </li>
+    
+    <li role="presentation">
+      <a role="menuitem" lang="ko"
+        >한국어</a>
+    </li>
+    
+  </ul>
+</devsite-language-selector>
+
+  </nav>
+</div>
+          
+        </devsite-footer-utility>
+        <devsite-panel>
+          
+        </devsite-panel>
+        
+          <devsite-concierge
+  
+  
+    data-info-panel
+  
+  
+    data-ai-panel
+  
+  
+  
+  
+    data-api-explorer-panel
+  >
+</devsite-concierge>
+        
+      </section>
+      </section>
+    <devsite-sitemask></devsite-sitemask>
+    <devsite-snackbar></devsite-snackbar>
+    <devsite-tooltip ></devsite-tooltip>
+    <devsite-heading-link></devsite-heading-link>
+    <devsite-analytics>
+      
+        <script type="application/json" analytics>[{&#34;dimensions&#34;: {&#34;dimension6&#34;: &#34;en&#34;, &#34;dimension3&#34;: false, &#34;dimension11&#34;: false, &#34;dimension4&#34;: &#34;YouTube Analytics and Reporting APIs&#34;, &#34;dimension1&#34;: &#34;Signed In&#34;, &#34;dimension5&#34;: &#34;en&#34;}, &#34;gaid&#34;: &#34;UA-24532603-1&#34;, &#34;metrics&#34;: {&#34;ratings_count&#34;: &#34;metric2&#34;, &#34;ratings_value&#34;: &#34;metric1&#34;}, &#34;purpose&#34;: 1}]</script>
+<script type="application/json" tag-management>{&#34;at&#34;: &#34;True&#34;, &#34;ga4&#34;: [{&#34;id&#34;: &#34;G-272J68FCRF&#34;, &#34;purpose&#34;: 1}, {&#34;id&#34;: &#34;G-NLK1PMB7B2&#34;, &#34;purpose&#34;: 0}], &#34;ga4p&#34;: [{&#34;id&#34;: &#34;G-272J68FCRF&#34;, &#34;purpose&#34;: 1}], &#34;gtm&#34;: [{&#34;id&#34;: &#34;GTM-T98GCPGN&#34;, &#34;purpose&#34;: 1}], &#34;parameters&#34;: {&#34;internalUser&#34;: &#34;False&#34;, &#34;language&#34;: {&#34;machineTranslated&#34;: &#34;False&#34;, &#34;requested&#34;: &#34;en&#34;, &#34;served&#34;: &#34;en&#34;}, &#34;pageType&#34;: &#34;reference&#34;, &#34;projectName&#34;: &#34;YouTube Analytics and Reporting APIs&#34;, &#34;signedIn&#34;: &#34;True&#34;, &#34;tenant&#34;: &#34;developers&#34;, &#34;recommendations&#34;: {&#34;sourcePage&#34;: &#34;&#34;, &#34;sourceType&#34;: 0, &#34;sourceRank&#34;: 0, &#34;sourceIdenticalDescriptions&#34;: 0, &#34;sourceTitleWords&#34;: 0, &#34;sourceDescriptionWords&#34;: 0, &#34;experiment&#34;: &#34;&#34;}, &#34;experiment&#34;: {&#34;ids&#34;: &#34;&#34;}}}</script>
+      
+    </devsite-analytics>
+    
+      <devsite-badger></devsite-badger>
+    
+    
+    
+    
+    
+<script nonce="Trh0nTPbCSzekg8qJ5E9ef1OQpN5nE">
+  
+  (function(d,e,v,s,i,t,E){d['GoogleDevelopersObject']=i;
+    t=e.createElement(v);t.async=1;t.src=s;E=e.getElementsByTagName(v)[0];
+    E.parentNode.insertBefore(t,E);})(window, document, 'script',
+    'https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/js/app_loader.js', '[1,"en",null,"/js/devsite_app_module.js","https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420","https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers","https://developers-dot-devsite-v2-prod.appspot.com",1,null,["/_pwa/developers/manifest.json","https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/images/video-placeholder.svg","https://www.gstatic.com/devrel-devsite/prod/v9ce9cb5b22b62a465ff52c45061a0a6a2d86a80b685e9aa8a182b203fdfbf420/developers/images/favicon-new.png","https://fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700&display=swap"],1,null,[1,6,8,12,14,17,21,25,50,52,63,70,75,76,80,87,91,92,93,97,98,100,101,102,103,104,105,107,108,109,110,112,113,117,118,120,122,124,125,126,127,129,130,131,132,133,134,135,136,138,140,141,147,148,149,151,152,156,157,158,159,161,163,164,168,169,170,179,180,182,183,186,191,193,196],"AIzaSyAP-jjEJBzmIyKR4F-3XITp8yM9T1gEEI8","AIzaSyB6xiKGDR5O3Ak2okS4rLkauxGUG7XP0hg","developers.google.com","AIzaSyAQk0fBONSGUqCNznf6Krs82Ap1-NV6J4o","AIzaSyCCxcqdrZ_7QMeLCRY20bh_SXdAYqy70KY",null,null,null,["Analytics__enable_clearcut_logging","Search__enable_ai_eligibility_checks","Profiles__enable_join_program_group_endpoint","SignIn__enable_l1_signup_flow","DevPro__enable_enterprise","MiscFeatureFlags__enable_variable_operator","Search__enable_ai_search_summaries_for_all","Significatio__enable_by_tenant","Profiles__require_profile_eligibility_for_signin","Concierge__enable_concierge","MiscFeatureFlags__enable_explicit_template_dependencies","DevPro__enable_g1_ineligible_redirect","DevPro__enable_google_payments_buyflow","MiscFeatureFlags__enable_explain_this_code","DevPro__enable_firebase_workspaces_card","DevPro__enable_vertex_credit_card","DevPro__enable_free_benefits","Profiles__enable_auto_apply_credits","DevPro__enable_payments_init","Cloud__cache_serialized_dynamic_content","Profiles__enable_developer_profile_benefits_ui_redesign","DevPro__enable_credits_banner","DevPro__enable_code_assist","DevPro__enable_cloud_innovators_plus","Cloud__enable_legacy_calculator_redirect","Cloud__enable_cloudx_experiment_ids","Concierge__enable_key_takeaways_new_ui","Cloud__enable_free_trial_server_call","DevPro__enable_devpro_offers","DevPro__enable_google_one_card","Analytics__enable_devpro_interaction_logging","BookNav__enable_tenant_cache_key","CloudShell__cloud_code_overflow_menu","Concierge__enable_key_takeaways","Search__enable_page_map","Profiles__enable_callout_notifications","CloudShell__cloud_shell_button","Profiles__enable_completequiz_endpoint","Concierge__enable_actions_menu","Profiles__enable_completecodelab_endpoint","Profiles__enable_developer_profiles_callout","Cloud__enable_cloud_dlp_service","Profiles__enable_stripe_subscription_management","Profiles__enable_public_developer_profiles","MiscFeatureFlags__developers_footer_dark_image","Profiles__enable_purchase_prompts","Profiles__enable_awarding_url","TpcFeatures__proxy_prod_host","Concierge__enable_pushui","MiscFeatureFlags__fix_lower_breadcrumbs","Profiles__enable_release_notes_notifications","DevPro__enable_developer_subscriptions","Profiles__enable_complete_playlist_endpoint","Profiles__enable_page_saving","MiscFeatureFlags__gdp_dashboard_reskin_enabled","Search__enable_dynamic_content_confidential_banner","DevPro__enable_embed_profile_creation","DevPro__enable_g1_integration","Profiles__enable_recognition_badges","Search__enable_ai_search_summaries_restricted","MiscFeatureFlags__enable_appearance_cookies","MiscFeatureFlags__enable_variable_operator_index_yaml","EngEduTelemetry__enable_engedu_telemetry","Profiles__enable_developer_profile_pages_as_content","MiscFeatureFlags__developers_footer_image","DevPro__enable_devsite_captcha","MiscFeatureFlags__enable_view_transitions","Profiles__enable_profile_collections","Profiles__enable_playlist_community_acl","Search__enable_ai_search_summaries","Cloud__fast_free_trial","MiscFeatureFlags__remove_cross_domain_tracking_params","MiscFeatureFlags__enable_firebase_utm","Cloud__enable_cloud_shell","DevPro__remove_eu_tax_intake_form","Profiles__enable_user_type","Concierge__enable_concierge_restricted","Profiles__enable_targeted_hero","MiscFeatureFlags__enable_framebox_badge_methods","Cloud__enable_cloud_shell_fte_user_flow","TpcFeatures__enable_unmirrored_page_left_nav","AIStudioInteractionsToggle__interactions_are_default","Concierge__enable_devsite_llm_tools","DevPro__enable_nvidia_credits_card","Search__enable_suggestions_from_borg","Experiments__reqs_query_experiments","Profiles__enable_dashboard_curated_recommendations","MiscFeatureFlags__enable_project_variables","Concierge__enable_remove_info_panel_tags"],null,null,"AIzaSyBLEMok-5suZ67qRPzx0qUtbnLmyT_kCVE","https://developerscontentserving-pa.clients6.google.com","AIzaSyCM4QpTRSqP5qI4Dvjt4OAScIN8sOUlO-k","https://developerscontentsearch-pa.clients6.google.com",1,4,null,"https://developerprofiles-pa.clients6.google.com",[1,"developers","Google for Developers","developers.google.com",null,"developers-dot-devsite-v2-prod.appspot.com",null,null,[1,1,[1],null,null,null,null,null,null,null,null,[1],null,null,null,null,null,null,[1],[1,null,null,[1,20],"/recommendations/information"],null,null,null,[1,1,1],[1,1,null,1,1,null,null,["/meridian"]],[1,null,null,null,null,null,null,["/admob","/ad-manager/mobile-ads-sdk","/ml-kit"]],null,[null,["/meridian","/youtube/devices/"]],1,null,[1]],null,[null,null,null,null,null,null,"/images/lockup-new.svg","/images/touchicon-180-new.png",null,null,null,null,1,null,null,null,null,null,null,null,null,1,null,null,null,"/images/lockup-dark-theme-new.svg",[]],[],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[6,1,14,15,20,22,23,29,32,36],null,[[null,null,null,[3,7,10,2,39,17,4,32,24,11,12,13,34,15,25],null,null,[1,[["docType","Choose a content type",[["Tutorial",null,null,null,null,null,null,null,null,"Tutorial"],["Guide",null,null,null,null,null,null,null,null,"Guide"],["Sample",null,null,null,null,null,null,null,null,"Sample"]]],["product","Choose a product",[["Android",null,null,null,null,null,null,null,null,"Android"],["ARCore",null,null,null,null,null,null,null,null,"ARCore"],["ChromeOS",null,null,null,null,null,null,null,null,"ChromeOS"],["Firebase",null,null,null,null,null,null,null,null,"Firebase"],["Flutter",null,null,null,null,null,null,null,null,"Flutter"],["Assistant",null,null,null,null,null,null,null,null,"Google Assistant"],["GoogleCloud",null,null,null,null,null,null,null,null,"Google Cloud"],["GoogleMapsPlatform",null,null,null,null,null,null,null,null,"Google Maps Platform"],["GooglePay",null,null,null,null,null,null,null,null,"Google Pay & Google Wallet"],["GooglePlay",null,null,null,null,null,null,null,null,"Google Play"],["Tensorflow",null,null,null,null,null,null,null,null,"TensorFlow"]]],["category","Choose a topic",[["AiAndMachineLearning",null,null,null,null,null,null,null,null,"AI and Machine Learning"],["Data",null,null,null,null,null,null,null,null,"Data"],["Enterprise",null,null,null,null,null,null,null,null,"Enterprise"],["Gaming",null,null,null,null,null,null,null,null,"Gaming"],["Mobile",null,null,null,null,null,null,null,null,"Mobile"],["Web",null,null,null,null,null,null,null,null,"Web"]]]]]],[1,1],null,1],[[["UA-24532603-1"],["UA-22084204-5"],null,null,["UA-24532603-5"],["GTM-T98GCPGN"],null,[["G-272J68FCRF"],null,null,[["G-272J68FCRF",2]]],[["UA-24532603-1",2]],null,[["UA-24532603-5",2]],[["GTM-T98GCPGN",2]],1],[[15,12],[11,8],[6,5],[14,11],[12,9],[13,10],[16,13],[4,3],[5,4],[1,1],[3,2]],[[2,2],[1,1]]],null,4,null,null,null,null,null,null,null,null,null,null,null,null,null,"developers.devsite.google",null,null,null,null,null,[]],null,"pk_live_5170syrHvgGVmSx9sBrnWtA5luvk9BwnVcvIi7HizpwauFG96WedXsuXh790rtij9AmGllqPtMLfhe2RSwD6Pn38V00uBCydV4m",1,1,"https://developerscontentinsights-pa.clients6.google.com","AIzaSyCg-ZUslalsEbXMfIo9ZP8qufZgo3LSBDU","AIzaSyDxT0vkxnY_KeINtA4LSePJO-4MAZPMRsE","https://developers.clients6.google.com",["https://codeassist.google.com","https://code-assist-free-tier.corp.google.com"],null,"AIzaSyBQom12tzI-rybN7Sf-KfeL4nwm-Rf7PmI\n",null,null,"https://developers.googleapis.com"]')
+  
+</script>
+
+    <devsite-a11y-announce></devsite-a11y-announce>
+  </body>
+</html>

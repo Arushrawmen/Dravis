@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { NewsItem, ReminderItem, WeatherData } from "../types";
 import { soundEffects } from "../utils/audioSynth";
+import { GoogleAdSenseBanner } from "./AdSense/GoogleAdSenseBanner";
 
 interface RightSidebarProps {
   newsList: NewsItem[];
@@ -107,6 +108,13 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           VIEW ALL
         </button>
       </div>
+
+      {/* GOOGLE ADSENSE SPONSORED UNIT (ca-pub-2203384651585087) */}
+      <GoogleAdSenseBanner
+        client="ca-pub-2203384651585087"
+        adSlot="1002003004"
+        variant="SIDEBAR_BOX"
+      />
 
       {/* 2. Section 14: REMINDERS CARD */}
       <div 

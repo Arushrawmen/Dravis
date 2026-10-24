@@ -182,7 +182,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               MASTER PROFILE & ACCOUNT SWITCHER
             </h3>
             <span className="text-xs text-slate-400 font-mono">
-              Active Account: <span className="text-cyan-300 font-bold">{currentAccount?.displayName || formData.name}</span> ({currentAccount?.email || "arushgamer783@gmail.com"})
+              Active Account: <span className="text-cyan-300 font-bold">{currentAccount?.displayName || formData.name}</span> {currentAccount?.email ? `(${currentAccount.email})` : ""}
             </span>
           </div>
         </div>

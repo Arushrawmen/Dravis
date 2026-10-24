@@ -41,10 +41,13 @@ import {
   Upload,
   ExternalLink,
   FileAudio,
+  Copy,
+  Check,
 } from "lucide-react";
 import { MessageItem, VoiceState, UserProfile, FileItem } from "../types";
 import { soundEffects } from "../utils/audioSynth";
 import { BioScienceViewerCard } from "./BioScienceViewerCard";
+import { AudioVolumeVisualizer } from "./AudioVolumeVisualizer";
 
 export type CreationMode =
   | "NONE"
@@ -126,6 +129,23 @@ export const DravisChatView: React.FC<DravisChatViewProps> = ({
     title: string;
     html: string;
   } | null>(null);
+  const [copiedPromptId, setCopiedPromptId] = useState<string | null>(null);
+  const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+
+  const handleCopyPrompt = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedPromptId(id);
+    if (userProfile.soundEffects) soundEffects.playTaskComplete();
+    setTimeout(() => setCopiedPromptId(null), 2000);
+  };
+
+  const handleCopyMessage = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedMsgId(id);
+    if (userProfile.soundEffects) soundEffects.playTaskComplete();
+    setTimeout(() => setCopiedMsgId(null), 2000);
+  };
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1018,10 +1038,44 @@ export const DravisChatView: React.FC<DravisChatViewProps> = ({
                     </div>
                   )}
 
-                  {/* If Detailed Markdown exists */}
-                  {msg.detailedMarkdown && msg.detailedMarkdown !== msg.text && (
-                    <div className="mt-2.5 pt-2.5 border-t border-white/10 text-xs text-slate-300 font-mono">
-                      <p className="whitespace-pre-wrap">{msg.detailedMarkdown}</p>
+                  {/* Generated Prompt Card with 1-Click Copy */}
+                  {msg.generatedPrompt && (
+                    <div className="mt-3 p-3.5 rounded-2xl bg-gradient-to-br from-cyan-950/40 via-purple-950/20 to-slate-900/60 border border-cyan-400/40 shadow-[0_0_25px_rgba(34,211,238,0.15)] space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 rounded-xl bg-cyan-400/20 text-cyan-300 border border-cyan-400/30">
+                            <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-mono font-bold text-cyan-200">
+                              {msg.generatedPrompt.topic || "AI Optimized Prompt"}
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-mono">
+                              {msg.generatedPrompt.category || "Creative AI"} {msg.generatedPrompt.suggestedModel ? `• ${msg.generatedPrompt.suggestedModel}` : ""}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyPrompt(msg.generatedPrompt!.promptText, msg.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 active:scale-95 text-slate-950 text-xs font-mono font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] cursor-pointer shrink-0"
+                        >
+                          {copiedPromptId === msg.id ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-950" />
+                              <span>Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copy Prompt</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-slate-200 font-mono whitespace-pre-wrap leading-relaxed select-all">
+                        {msg.generatedPrompt.promptText}
+                      </div>
                     </div>
                   )}
 
@@ -1108,53 +1162,33 @@ export const DravisChatView: React.FC<DravisChatViewProps> = ({
                   )}
                 </div>
 
-                {/* Reasoning Steps Accordion (for DRAVIS messages) */}
-                {!isUser && hasReasoning && (
-                  <div className="rounded-xl border border-white/10 bg-white/5 overflow-hidden font-mono text-xs">
-                    <button
-                      onClick={() => toggleReasoning(msg.id)}
-                      className="w-full px-3 py-1.5 flex items-center justify-between text-cyan-400 hover:text-cyan-300 transition-colors text-[11px]"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <Cpu className="w-3 h-3" />
-                        <span>Reasoning Trace ({msg.reasoningSteps?.length} steps)</span>
-                      </div>
-                      {isExpanded ? (
-                        <ChevronUp className="w-3.5 h-3.5" />
-                      ) : (
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="px-3 py-2 border-t border-white/10 bg-black/30 space-y-1 text-[11px] text-slate-300"
-                        >
-                          {msg.reasoningSteps?.map((step, idx) => (
-                            <div key={idx} className="flex items-start gap-2">
-                              <span className="text-cyan-400 font-bold">•</span>
-                              <span>{step}</span>
-                            </div>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
-
-                {/* Speech Replay Button */}
+                {/* Speech Replay & 1-Click Copy Buttons */}
                 {!isUser && (
                   <div className="flex items-center gap-2 mt-0.5">
                     <button
+                      type="button"
                       onClick={() => onSpeakMessage(msg.text)}
-                      className="flex items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-cyan-400 transition-colors px-2 py-0.5 rounded-md hover:bg-white/5"
+                      className="flex items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-cyan-400 transition-colors px-2 py-0.5 rounded-md hover:bg-white/5 cursor-pointer"
                     >
                       <Volume2 className="w-3 h-3" />
                       <span>Replay Voice</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyMessage(msg.text, msg.id)}
+                      className="flex items-center gap-1 text-[10px] font-mono text-slate-400 hover:text-cyan-400 transition-colors px-2 py-0.5 rounded-md hover:bg-white/5 cursor-pointer"
+                    >
+                      {copiedMsgId === msg.id ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span className="text-emerald-400">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          <span>Copy</span>
+                        </>
+                      )}
                     </button>
                   </div>
                 )}
@@ -1494,6 +1528,13 @@ export const DravisChatView: React.FC<DravisChatViewProps> = ({
           >
             {isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
           </button>
+
+          {/* Real-Time Audio Volume Visualizer */}
+          <AudioVolumeVisualizer
+            isListening={isListening}
+            isSpeaking={voiceState === "SPEAKING"}
+            className="shrink-0"
+          />
 
           <input
             type="text"

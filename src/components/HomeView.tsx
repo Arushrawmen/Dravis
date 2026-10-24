@@ -42,6 +42,7 @@ import { ArcReactor } from "./ArcReactor";
 import { AvatarHologram } from "./AvatarHologram";
 import { ScreenMonitorControlStrip } from "./ScreenMonitorControlStrip";
 import { soundEffects } from "../utils/audioSynth";
+import { GoogleAdSenseBanner } from "./AdSense/GoogleAdSenseBanner";
 
 interface HomeViewProps {
   userProfile: UserProfile;
@@ -475,6 +476,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </div>
             </div>
           </div>
+
+          {/* GOOGLE ADSENSE SPONSORED UNIT (ca-pub-2203384651585087) */}
+          <GoogleAdSenseBanner
+            client="ca-pub-2203384651585087"
+            adSlot="1002003004"
+            variant="SIDEBAR_BOX"
+          />
         </div>
       </div>
 

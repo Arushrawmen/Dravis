@@ -35,9 +35,41 @@ export const GOOGLE_WORKSPACE_SCOPES = [
   "https://www.googleapis.com/auth/drive",
   "https://www.googleapis.com/auth/drive.file",
   "https://www.googleapis.com/auth/drive.readonly",
+  // Google Calendar Scopes
+  "https://www.googleapis.com/auth/calendar",
+  "https://www.googleapis.com/auth/calendar.events",
+  "https://www.googleapis.com/auth/calendar.readonly",
+  // Google Contacts (People API) Scopes
+  "https://www.googleapis.com/auth/contacts",
+  "https://www.googleapis.com/auth/contacts.other.readonly",
+  "https://www.googleapis.com/auth/contacts.readonly",
+  "https://www.googleapis.com/auth/directory.readonly",
+  "https://www.googleapis.com/auth/user.addresses.read",
+  "https://www.googleapis.com/auth/user.birthday.read",
+  "https://www.googleapis.com/auth/user.emails.read",
+  "https://www.googleapis.com/auth/user.gender.read",
+  "https://www.googleapis.com/auth/user.organization.read",
+  "https://www.googleapis.com/auth/user.phonenumbers.read",
 ];
 
 export const GMAIL_SCOPES = GOOGLE_WORKSPACE_SCOPES;
+export const CALENDAR_SCOPES = [
+  "https://www.googleapis.com/auth/calendar",
+  "https://www.googleapis.com/auth/calendar.events",
+  "https://www.googleapis.com/auth/calendar.readonly",
+];
+export const CONTACTS_SCOPES = [
+  "https://www.googleapis.com/auth/contacts",
+  "https://www.googleapis.com/auth/contacts.other.readonly",
+  "https://www.googleapis.com/auth/contacts.readonly",
+  "https://www.googleapis.com/auth/directory.readonly",
+  "https://www.googleapis.com/auth/user.addresses.read",
+  "https://www.googleapis.com/auth/user.birthday.read",
+  "https://www.googleapis.com/auth/user.emails.read",
+  "https://www.googleapis.com/auth/user.gender.read",
+  "https://www.googleapis.com/auth/user.organization.read",
+  "https://www.googleapis.com/auth/user.phonenumbers.read",
+];
 
 // Register all scopes with GoogleAuthProvider
 GOOGLE_WORKSPACE_SCOPES.forEach((scope) => {

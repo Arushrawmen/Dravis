@@ -11,6 +11,10 @@ export type NavigationTab =
   | "CHAT"
   | "GMAIL"
   | "DRIVE"
+  | "CALENDAR"
+  | "CONTACTS"
+  | "MAPS"
+  | "CODEX"
   | "LEARNING"
   | "HISTORY"
   | "PROFILE"
@@ -21,6 +25,8 @@ export type NavigationTab =
   | "AUTOMATION"
   | "FILES"
   | "SYSTEM";
+
+export type NavTab = NavigationTab;
 
 export type VoiceState = "ONLINE" | "IDLE" | "LISTENING" | "THINKING" | "SPEAKING";
 export type ResponseMode = "QUICK" | "NORMAL" | "DEEP" | "RESEARCH";
@@ -380,6 +386,13 @@ export interface MessageItem {
   bioScienceAnalysis?: any;
   generatedAppBundle?: GeneratedAppBundle;
   degradationState?: DegradationState;
+  generatedPrompt?: {
+    topic: string;
+    promptText: string;
+    category?: string;
+    negativePrompt?: string;
+    suggestedModel?: string;
+  };
 }
 
 export interface MemoryEntry {
@@ -922,7 +935,30 @@ export interface ActiveCallState {
   durationSeconds: number;
   isMuted: boolean;
   isSpeakerOn: boolean;
+  isRecording?: boolean;
+  recordingDurationSeconds?: number;
   callStartTime?: number;
+  direction?: "OUTGOING" | "INCOMING";
+}
+
+export interface CallHistoryItem {
+  id: string;
+  contactName: string;
+  number: string;
+  label?: string;
+  type: "INCOMING" | "OUTGOING" | "MISSED";
+  timestamp: string;
+  durationSeconds: number;
+  recordingUrl?: string;
+  recordingFileName?: string;
+  recordingMimeType?: string;
+  transcript?: string;
+  summary?: string;
+  keyPoints?: string[];
+  actionItems?: string[];
+  sentiment?: "POSITIVE" | "NEUTRAL" | "URGENT" | "FOLLOW_UP";
+  isSummarizing?: boolean;
+  analyzedAt?: string;
 }
 
 export interface ContactSelectionPrompt {
@@ -1014,12 +1050,17 @@ export interface MultiWorkTask {
 export interface MicroDecisionNode {
   id: string;
   title: string;
-  category: "VOICE_STT_TTS" | "INTENT_SLOT_FILL" | "VECTOR_MEMORY" | "SCREEN_AUTO_FIX" | "MULTI_WORK_AGENT" | "SYSTEM_CONTROL";
+  category: "VOICE_STT_TTS" | "INTENT_SLOT_FILL" | "VECTOR_MEMORY" | "SCREEN_AUTO_FIX" | "MULTI_WORK_AGENT" | "SYSTEM_CONTROL" | "AUTONOMOUS_EXECUTIVE" | "NEURAL_REASONING";
   status: "ACTIVE" | "COMPLETED" | "MONITORING" | "AUTO_FIXING";
-  // 360 3D spherical coordinates
+  // 360 3D spherical coordinates & Multi-Sector Infinite World coordinates
   theta: number;
   phi: number;
   radius: number;
+  sectorId?: number;
+  worldX?: number;
+  worldY?: number;
+  worldZ?: number;
+  bridgeFromNodeId?: string;
   color: string;
   // Core 3 questions the user asked to see for every micro-decision
   whatItTakes: string;
@@ -1035,6 +1076,8 @@ export interface MicroDecisionNode {
   apiUsed: "GOOGLE_GEMINI" | "OPENAI_GPT" | "DUAL_SYNTHESIS";
   connectedTo: string[];
   timestamp: string;
+  workPatternKey?: string;
+  learnedExecutionPlan?: string;
   pipelineTrace?: {
     voiceCommand: string;
     localStt: string;
@@ -1114,4 +1157,31 @@ export interface TimelineActionLog {
   commandToReplay?: string;
   status: "COMPLETED" | "RUNNING" | "QUEUED";
   timestamp: string;
+}
+
+export interface CodexFile {
+  id: string;
+  name: string;
+  path: string;
+  language: string;
+  content: string;
+}
+
+export interface CodexProject {
+  id: string;
+  title: string;
+  description: string;
+  language: string;
+  framework?: string;
+  files: CodexFile[];
+  activeFileId: string;
+  createdAt: string;
+}
+
+export interface EmotionProfile {
+  detectedEmotion: "HAPPY" | "CURIOUS" | "STRESSED" | "EXCITED" | "FRUSTRATED" | "CONTEMPLATIVE" | "NEUTRAL";
+  empathyResonance: number;
+  dravisMood: "AFFECTIONATE" | "CURIOUS" | "FOCUSED" | "PLAYFUL" | "COMFORTING" | "PROUD";
+  warmthLevel: number;
+  comfortingNote?: string;
 }

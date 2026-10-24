@@ -24,6 +24,9 @@ import {
   PhoneOff,
   Mail,
   HardDrive,
+  Calendar,
+  Users,
+  MapPin,
   Mic,
   MicOff,
   X,
@@ -56,6 +59,9 @@ import {
   LogOut,
   UserPlus,
   ArrowLeftRight,
+  Globe,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   VoiceState,
@@ -69,12 +75,13 @@ import {
   UserAccount,
   MicroDecisionNode,
   NavigationTab,
+  DRAVIS_LANGUAGES,
 } from "../types";
 import { soundEffects } from "../utils/audioSynth";
 import { ScreenMonitorControlStrip } from "./ScreenMonitorControlStrip";
+import { GoogleAdSenseBanner } from "./AdSense/GoogleAdSenseBanner";
 import {
   COUNTRY_CODE_OPTIONS,
-  UNIVERSAL_APP_CATALOG,
   deviceHardware,
 } from "../utils/deviceHardware";
 import dravisSparkLogo from "../assets/images/dravis_spark_logo_1789562293560.jpg";
@@ -114,6 +121,7 @@ interface AndroidMobileResolutionViewProps {
   onEndCall: () => void;
   onToggleMute: () => void;
   onToggleSpeaker: () => void;
+  onToggleRecording?: () => void;
   contactPrompt: ContactSelectionPrompt | null;
   onSelectPhoneNumber: (number: string, label: string) => void;
   onCancelContactPrompt: () => void;
@@ -164,6 +172,7 @@ interface AndroidMobileResolutionViewProps {
   accountHistoryCounts?: Record<string, { chats: number; memories: number; logs: number }>;
   onOpenGitHubModal?: () => void;
   onOpenAndroidCli?: () => void;
+  onUpdateUserProfile?: (updated: UserProfile) => void;
 }
 
 export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewProps> = ({
@@ -178,6 +187,7 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
   activeCall,
   onEndCall,
   onToggleMute,
+  onToggleRecording,
   contacts,
   onDirectCallContact,
   onAddContact,
@@ -208,6 +218,7 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
   accountHistoryCounts = {},
   onOpenGitHubModal,
   onOpenAndroidCli,
+  onUpdateUserProfile,
 }) => {
   // Bottom Liquid Glass Bar has ONLY the 3 requested tabs: "DRAVIS" | "CHATS" | "SETTINGS"
   const [activeTab, setActiveTab] = useState<"DRAVIS" | "CHATS" | "SETTINGS">("DRAVIS");
@@ -220,8 +231,9 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
 
   // Inside Settings: Clean section filter so nothing looks congested
   const [settingsSubSection, setSettingsSubSection] = useState<
-    "ALL" | "PROFILE" | "HARDWARE" | "FILES" | "APPS" | "MODULES"
+    "ALL" | "PROFILE" | "HARDWARE" | "FILES" | "MODULES"
   >("ALL");
+  const [isLanguageListOpen, setIsLanguageListOpen] = useState<boolean>(false);
 
   // Android Add Account Drawer State inside Profile & Accounts
   const [isAddingAccountAndroid, setIsAddingAccountAndroid] = useState(false);
@@ -656,6 +668,27 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
+                {onToggleRecording && (
+                  <button
+                    onClick={onToggleRecording}
+                    className={`px-2.5 py-1.5 rounded-xl border font-mono text-[10px] font-bold flex items-center gap-1 ${
+                      activeCall.isRecording
+                        ? "bg-rose-500/30 border-rose-400 text-rose-200"
+                        : "bg-white/10 border-white/15 text-slate-200"
+                    }`}
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        activeCall.isRecording ? "bg-rose-400 animate-ping" : "bg-rose-400"
+                      }`}
+                    />
+                    <span>
+                      {activeCall.isRecording
+                        ? `REC ${formatCallTime(activeCall.recordingDurationSeconds || 0)}`
+                        : "REC"}
+                    </span>
+                  </button>
+                )}
                 <a
                   href={`tel:${activeCall.number}`}
                   target="_top"
@@ -1214,6 +1247,14 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                       </span>
                     </div>
                   ))}
+
+                  {/* GOOGLE ADSENSE SPONSORED BANNER (ca-pub-2203384651585087) */}
+                  <GoogleAdSenseBanner
+                    client="ca-pub-2203384651585087"
+                    adSlot="1002003004"
+                    variant="SIDEBAR_BOX"
+                    className="my-2"
+                  />
                   <div ref={chatEndRef} />
                 </div>
 
@@ -1264,11 +1305,10 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                 <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
                   {[
                     { id: "ALL", label: "All Settings" },
-                    { id: "PROFILE", label: "Profile & Accounts" },
+                    { id: "PROFILE", label: "Profile & Language" },
                     { id: "HARDWARE", label: "Hardware" },
                     { id: "FILES", label: "Files & Folders" },
-                    { id: "APPS", label: "Apps" },
-                    { id: "MODULES", label: "Customization & Modules" },
+                    { id: "MODULES", label: "Core Modules" },
                   ].map((pill) => (
                     <button
                       key={pill.id}
@@ -1287,6 +1327,111 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                     </button>
                   ))}
                 </div>
+
+                {/* SINGLE-ROW LANGUAGE BAR (Default: Auto-Select; Click to Expand All 43 Languages) */}
+                {(settingsSubSection === "ALL" || settingsSubSection === "PROFILE") && (
+                  <div className="liquid-glass rounded-2xl p-3 flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundEffects.playChirp();
+                        setIsLanguageListOpen((prev) => !prev);
+                      }}
+                      className="w-full flex items-center justify-between gap-3 px-2 py-1.5 rounded-xl bg-black/40 hover:bg-white/10 border border-white/10 transition-all cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="p-2 rounded-xl bg-cyan-500/15 text-cyan-300 border border-cyan-400/30 shrink-0">
+                          <Globe className="w-4 h-4" />
+                        </div>
+                        <div className="text-left min-w-0">
+                          <span className="text-xs font-mono font-bold text-white block">
+                            Language
+                          </span>
+                          <span className="text-[10px] font-mono text-cyan-300 truncate block">
+                            {userProfile.autoAdaptLanguage !== false ||
+                            userProfile.preferredLanguage === "AUTO_ADAPT"
+                              ? "Auto-Select (All 43 Languages)"
+                              : (() => {
+                                  const found = DRAVIS_LANGUAGES.find(
+                                    (l) => l.code === userProfile.preferredLanguage
+                                  );
+                                  return found ? `${found.name} (${found.nativeName})` : userProfile.preferredLanguage;
+                                })()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="px-2 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-400/30 text-[9px] font-mono font-bold text-cyan-200">
+                          {userProfile.autoAdaptLanguage !== false ||
+                          userProfile.preferredLanguage === "AUTO_ADAPT"
+                            ? "AUTO"
+                            : userProfile.preferredLanguage}
+                        </span>
+                        {isLanguageListOpen ? (
+                          <ChevronUp className="w-4 h-4 text-cyan-300" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-slate-400" />
+                        )}
+                      </div>
+                    </button>
+
+                    {isLanguageListOpen && (
+                      <div className="max-h-56 overflow-y-auto flex flex-col gap-1.5 pt-1 pr-1 border-t border-white/10">
+                        {DRAVIS_LANGUAGES.map((lang) => {
+                          const isAuto = lang.code === "AUTO_ADAPT";
+                          const isSelected = isAuto
+                            ? userProfile.autoAdaptLanguage !== false ||
+                              userProfile.preferredLanguage === "AUTO_ADAPT"
+                            : userProfile.autoAdaptLanguage === false &&
+                              userProfile.preferredLanguage === lang.code;
+                          return (
+                            <button
+                              key={lang.code}
+                              type="button"
+                              onClick={() => {
+                                soundEffects.playActivatePulse();
+                                if (onUpdateUserProfile) {
+                                  onUpdateUserProfile({
+                                    ...userProfile,
+                                    preferredLanguage: isAuto ? "AUTO_ADAPT" : lang.code,
+                                    autoAdaptLanguage: isAuto,
+                                    detectedLanguage: isAuto
+                                      ? userProfile.detectedLanguage || "en-US"
+                                      : lang.code,
+                                  });
+                                }
+                                setIsLanguageListOpen(false);
+                              }}
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl border text-left transition-all cursor-pointer ${
+                                isSelected
+                                  ? "bg-cyan-500/25 border-cyan-400 text-white shadow-[0_0_12px_rgba(34,211,238,0.25)]"
+                                  : "bg-black/40 hover:bg-white/10 border-white/10 text-slate-300"
+                              }`}
+                            >
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-xs font-mono font-bold truncate">
+                                  {isAuto ? "Auto-Select (Auto-Adapt All 43 Languages)" : lang.name}
+                                </span>
+                                <span className="text-[10px] font-mono text-cyan-300/80 truncate">
+                                  {lang.nativeName} · {lang.region}
+                                </span>
+                              </div>
+                              <span
+                                className={`px-2 py-0.5 rounded-md font-mono text-[9px] font-bold shrink-0 ${
+                                  isSelected
+                                    ? "bg-cyan-400 text-slate-950"
+                                    : "bg-white/10 text-slate-400"
+                                }`}
+                              >
+                                {isSelected ? "ACTIVE" : "SELECT"}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* 0. PROFILE & ACCOUNTS: SWITCH ACCOUNT, ADD ACCOUNT & LOG OUT */}
                 {(settingsSubSection === "ALL" || settingsSubSection === "PROFILE") && (
@@ -1505,139 +1650,167 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                   </div>
                 )}
 
-                {/* 1. GENUINE DEVICE & HARDWARE CONTROLS */}
+                {/* 1. GENUINE DEVICE & HARDWARE CONTROLS (SINGLE-ROW BARS) */}
                 {(settingsSubSection === "ALL" || settingsSubSection === "HARDWARE") && (
-                  <div className="liquid-glass rounded-3xl p-4 flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
+                  <div className="liquid-glass rounded-3xl p-4 flex flex-col gap-2">
+                    <div className="flex items-center justify-between pb-1">
                       <span className="text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider">
                         Device & Hardware Controls
                       </span>
                       <span className="text-[9px] font-mono text-emerald-400">
-                        Direct OS Intents
+                        Single-Row Bars
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-2">
-                      {/* Wi-Fi */}
-                      <button
-                        onClick={() => {
-                          soundEffects.playChirp();
-                          onToggleDeviceControl("wifi");
-                        }}
-                        className={`min-h-[60px] flex flex-col items-center justify-center p-2 rounded-2xl border transition-all cursor-pointer ${
-                          deviceControls.wifi
-                            ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 shadow-[0_0_15px_rgba(34,211,238,0.3)]"
-                            : "bg-white/5 border-white/10 text-slate-400"
-                        }`}
-                      >
-                        <Wifi className="w-4 h-4 mb-1" />
-                        <span className="text-[9px] font-mono font-bold">Wi-Fi</span>
-                        <span className="text-[8px] font-mono opacity-80">
-                          {deviceControls.wifi ? "ON" : "OFF"}
-                        </span>
-                      </button>
+                    <div className="flex flex-col gap-2">
+                      {[
+                        {
+                          key: "wifi" as keyof DeviceSystemControls,
+                          label: "Wi-Fi Network",
+                          sub: "802.11ax Wireless Transceiver",
+                          active: deviceControls.wifi,
+                          icon: Wifi,
+                          activeClass: "bg-cyan-500/20 border-cyan-400/60 text-cyan-200",
+                          badgeClass: "bg-cyan-400 text-slate-950",
+                        },
+                        {
+                          key: "mobileData" as keyof DeviceSystemControls,
+                          label: "Mobile Cellular Data",
+                          sub: "5G Carrier Telemetry",
+                          active: deviceControls.mobileData,
+                          icon: Signal,
+                          activeClass: "bg-emerald-500/20 border-emerald-400/60 text-emerald-200",
+                          badgeClass: "bg-emerald-400 text-slate-950",
+                        },
+                        {
+                          key: "flightMode" as keyof DeviceSystemControls,
+                          label: "Flight Mode",
+                          sub: "Isolate All Wireless Transmitters",
+                          active: deviceControls.flightMode,
+                          icon: Plane,
+                          activeClass: "bg-amber-500/20 border-amber-400/60 text-amber-200",
+                          badgeClass: "bg-amber-400 text-slate-950",
+                        },
+                        {
+                          key: "flashlight" as keyof DeviceSystemControls,
+                          label: "Camera Flashlight / Torch",
+                          sub: "Rear Optical LED Array",
+                          active: deviceControls.flashlight,
+                          icon: Flashlight,
+                          activeClass: "bg-yellow-400/20 border-yellow-300/60 text-yellow-200",
+                          badgeClass: "bg-yellow-400 text-slate-950",
+                        },
+                        {
+                          key: "bluetooth" as keyof DeviceSystemControls,
+                          label: "Bluetooth 5.3",
+                          sub: "Low-Energy Peripheral Pairing",
+                          active: deviceControls.bluetooth,
+                          icon: Bluetooth,
+                          activeClass: "bg-blue-500/20 border-blue-400/60 text-blue-200",
+                          badgeClass: "bg-blue-400 text-slate-950",
+                        },
+                      ].map((hw) => {
+                        const Icon = hw.icon;
+                        return (
+                          <button
+                            key={hw.key}
+                            type="button"
+                            onClick={() => {
+                              soundEffects.playChirp();
+                              onToggleDeviceControl(hw.key);
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl border transition-all cursor-pointer ${
+                              hw.active
+                                ? hw.activeClass
+                                : "bg-black/40 border-white/10 text-slate-300 hover:bg-white/5"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="p-2 rounded-xl bg-white/10 shrink-0">
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <div className="text-left min-w-0">
+                                <span className="text-xs font-mono font-bold text-white block truncate">
+                                  {hw.label}
+                                </span>
+                                <span className="text-[10px] font-mono opacity-75 block truncate">
+                                  {hw.sub}
+                                </span>
+                              </div>
+                            </div>
+                            <span
+                              className={`px-3 py-1 rounded-full font-mono text-[10px] font-bold shrink-0 ${
+                                hw.active ? hw.badgeClass : "bg-white/10 text-slate-400"
+                              }`}
+                            >
+                              {hw.active ? "ON" : "OFF"}
+                            </span>
+                          </button>
+                        );
+                      })}
 
-                      {/* Mobile Data */}
-                      <button
-                        onClick={() => {
-                          soundEffects.playChirp();
-                          onToggleDeviceControl("mobileData");
-                        }}
-                        className={`min-h-[60px] flex flex-col items-center justify-center p-2 rounded-2xl border transition-all cursor-pointer ${
-                          deviceControls.mobileData
-                            ? "bg-emerald-500/25 border-emerald-400 text-emerald-200 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                            : "bg-white/5 border-white/10 text-slate-400"
-                        }`}
-                      >
-                        <Signal className="w-4 h-4 mb-1" />
-                        <span className="text-[9px] font-mono font-bold">Data</span>
-                        <span className="text-[8px] font-mono opacity-80">
-                          {deviceControls.mobileData ? "ON" : "OFF"}
-                        </span>
-                      </button>
-
-                      {/* Flight Mode */}
-                      <button
-                        onClick={() => {
-                          soundEffects.playChirp();
-                          onToggleDeviceControl("flightMode");
-                        }}
-                        className={`min-h-[60px] flex flex-col items-center justify-center p-2 rounded-2xl border transition-all cursor-pointer ${
-                          deviceControls.flightMode
-                            ? "bg-amber-500/25 border-amber-400 text-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
-                            : "bg-white/5 border-white/10 text-slate-400"
-                        }`}
-                      >
-                        <Plane className="w-4 h-4 mb-1" />
-                        <span className="text-[9px] font-mono font-bold">Flight</span>
-                        <span className="text-[8px] font-mono opacity-80">
-                          {deviceControls.flightMode ? "ON" : "OFF"}
-                        </span>
-                      </button>
-
-                      {/* Torch */}
-                      <button
-                        onClick={() => {
-                          soundEffects.playChirp();
-                          onToggleDeviceControl("flashlight");
-                        }}
-                        className={`min-h-[60px] flex flex-col items-center justify-center p-2 rounded-2xl border transition-all cursor-pointer ${
-                          deviceControls.flashlight
-                            ? "bg-yellow-400/30 border-yellow-300 text-yellow-200 shadow-[0_0_18px_rgba(250,204,21,0.45)]"
-                            : "bg-white/5 border-white/10 text-slate-400"
-                        }`}
-                      >
-                        <Flashlight className="w-4 h-4 mb-1" />
-                        <span className="text-[9px] font-mono font-bold">Torch</span>
-                        <span className="text-[8px] font-mono opacity-80">
-                          {deviceControls.flashlight ? "ON" : "OFF"}
-                        </span>
-                      </button>
-
-                      {/* Bluetooth */}
-                      <button
-                        onClick={() => {
-                          soundEffects.playChirp();
-                          onToggleDeviceControl("bluetooth");
-                        }}
-                        className={`min-h-[60px] flex flex-col items-center justify-center p-2 rounded-2xl border transition-all cursor-pointer ${
-                          deviceControls.bluetooth
-                            ? "bg-blue-500/25 border-blue-400 text-blue-200 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
-                            : "bg-white/5 border-white/10 text-slate-400"
-                        }`}
-                      >
-                        <Bluetooth className="w-4 h-4 mb-1" />
-                        <span className="text-[9px] font-mono font-bold">BT</span>
-                        <span className="text-[8px] font-mono opacity-80">
-                          {deviceControls.bluetooth ? "ON" : "OFF"}
-                        </span>
-                      </button>
-                    </div>
-
-                    {/* Wake Word & Voice Settings Toggle */}
-                    <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                      <div>
-                        <span className="text-xs font-mono font-bold text-white block">
-                          Wake Word: "{wakeWord}"
-                        </span>
-                        <span className="text-[10px] font-mono text-slate-400">
-                          Hands-free voice activation & lip-sync
-                        </span>
-                      </div>
+                      {/* Wake Word Single-Row Bar */}
                       <button
                         type="button"
                         onClick={() => {
                           soundEffects.playChirp();
                           onToggleWakeWord(!wakeWordActive);
                         }}
-                        className={`px-3.5 py-1.5 rounded-full font-mono text-[10px] font-bold cursor-pointer transition-all ${
+                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl border transition-all cursor-pointer ${
                           wakeWordActive
-                            ? "bg-emerald-400 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
-                            : "bg-white/10 text-slate-400"
+                            ? "bg-emerald-500/20 border-emerald-400/60 text-emerald-200"
+                            : "bg-black/40 border-white/10 text-slate-300 hover:bg-white/5"
                         }`}
                       >
-                        {wakeWordActive ? "ACTIVE" : "OFF"}
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="p-2 rounded-xl bg-white/10 shrink-0">
+                            <Mic className="w-4 h-4" />
+                          </div>
+                          <div className="text-left min-w-0">
+                            <span className="text-xs font-mono font-bold text-white block truncate">
+                              Wake Word: "{wakeWord}"
+                            </span>
+                            <span className="text-[10px] font-mono opacity-75 block truncate">
+                              Hands-free voice activation & lip-sync
+                            </span>
+                          </div>
+                        </div>
+                        <span
+                          className={`px-3 py-1 rounded-full font-mono text-[10px] font-bold shrink-0 ${
+                            wakeWordActive
+                              ? "bg-emerald-400 text-slate-950"
+                              : "bg-white/10 text-slate-400"
+                          }`}
+                        >
+                          {wakeWordActive ? "ACTIVE" : "OFF"}
+                        </span>
                       </button>
+
+                      {/* Camera Sensor Single-Row Bar */}
+                      {onOpenCamera && (
+                        <button
+                          type="button"
+                          onClick={onOpenCamera}
+                          className="w-full flex items-center justify-between px-3 py-2.5 rounded-2xl bg-black/40 hover:bg-white/10 border border-white/10 text-slate-200 transition-all cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-400/30 shrink-0">
+                              <Camera className="w-4 h-4" />
+                            </div>
+                            <div className="text-left min-w-0">
+                              <span className="text-xs font-mono font-bold text-white block truncate">
+                                Optical Camera Sensor
+                              </span>
+                              <span className="text-[10px] font-mono text-slate-400 block truncate">
+                                Live vision frame capture & analysis
+                              </span>
+                            </div>
+                          </div>
+                          <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-200 font-mono text-[10px] font-bold shrink-0">
+                            OPEN
+                          </span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -1682,20 +1855,20 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                     </div>
 
                     <form onSubmit={handleCreateRealFolderSubmit} className="flex flex-col gap-2">
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="flex flex-col gap-2">
                         <input
                           type="text"
                           value={androidFolderName}
                           onChange={(e) => setAndroidFolderName(e.target.value)}
                           placeholder="Folder Name..."
-                          className="bg-black/50 border border-white/15 rounded-2xl px-3 py-2 text-xs font-mono text-white outline-none"
+                          className="w-full bg-black/50 border border-white/15 rounded-2xl px-3 py-2 text-xs font-mono text-white outline-none"
                         />
                         <input
                           type="text"
                           value={androidFileName}
                           onChange={(e) => setAndroidFileName(e.target.value)}
                           placeholder="File Name (e.g. notes.md)"
-                          className="bg-black/50 border border-white/15 rounded-2xl px-3 py-2 text-xs font-mono text-white outline-none"
+                          className="w-full bg-black/50 border border-white/15 rounded-2xl px-3 py-2 text-xs font-mono text-white outline-none"
                         />
                       </div>
                       <button
@@ -1714,67 +1887,28 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                   </div>
                 )}
 
-                {/* 4. ALL APPS & SYSTEM LAUNCHER */}
-                {(settingsSubSection === "ALL" || settingsSubSection === "APPS") && (
-                  <div className="liquid-glass rounded-3xl p-4 flex flex-col gap-2.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono font-bold text-white">
-                        Instant App & Desktop Launcher
-                      </span>
-                      {onOpenCamera && (
-                        <button
-                          type="button"
-                          onClick={onOpenCamera}
-                          className="px-2.5 py-1 rounded-xl bg-purple-500/20 border border-purple-400/40 text-purple-200 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer"
-                        >
-                          <Camera className="w-3 h-3" />
-                          <span>Camera</span>
-                        </button>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {Object.values(UNIVERSAL_APP_CATALOG).map((app) => (
-                        <button
-                          key={app.id}
-                          onClick={() => {
-                            soundEffects.playChirp();
-                            if (onLaunchApp) {
-                              onLaunchApp(app.id);
-                            } else {
-                              onSendChatMessage(`open ${app.id}`);
-                            }
-                          }}
-                          className="min-h-[50px] p-2 rounded-2xl bg-black/40 hover:bg-white/10 border border-white/10 hover:border-cyan-400/40 flex flex-col items-center justify-center gap-0.5 transition-all cursor-pointer"
-                        >
-                          <span className="text-xs font-mono font-bold text-white truncate max-w-full">
-                            {app.name}
-                          </span>
-                          <span className="text-[9px] font-mono text-cyan-400">{app.category}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 5. CUSTOMIZATION, FILES & SYSTEM MODULES (No 3D Micro-Decision Screen; Background Engine Active) */}
+                {/* 4. CUSTOMIZATION, FILES & SYSTEM MODULES (SINGLE-ROW BARS) */}
                 {(settingsSubSection === "ALL" ||
                   settingsSubSection === "MODULES" ||
                   settingsSubSection === "FILES") && (
-                  <div className="liquid-glass rounded-3xl p-4 flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
+                  <div className="liquid-glass rounded-3xl p-4 flex flex-col gap-2.5">
+                    <div className="flex items-center justify-between pb-1">
                       <span className="text-xs font-mono font-bold text-white">
                         Customization, Files & Core Modules
                       </span>
                       <span className="text-[9px] font-mono text-emerald-400 flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        Micro-Decision Active (BG)
+                        Single-Row View
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="flex flex-col gap-2">
                       {[
                         { tab: "GMAIL" as NavigationTab, label: "Gmail Mailbox", icon: Mail },
                         { tab: "DRIVE" as NavigationTab, label: "Google Drive", icon: HardDrive },
+                        { tab: "CALENDAR" as NavigationTab, label: "Google Calendar", icon: Calendar },
+                        { tab: "CONTACTS" as NavigationTab, label: "Google Contacts", icon: Users },
+                        { tab: "MAPS" as NavigationTab, label: "Google Maps", icon: MapPin },
                         { tab: "SETTINGS" as NavigationTab, label: "AI & Voice Settings", icon: Settings },
                         { tab: "PROFILE" as NavigationTab, label: "User Profile", icon: User },
                         { tab: "FILES" as NavigationTab, label: "Files & AAB Builder", icon: FolderKanban },
@@ -1794,13 +1928,18 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                               soundEffects.playChirp();
                               onOpenDesktopModule?.(mod.tab);
                             }}
-                            className="p-3 rounded-2xl bg-black/40 hover:bg-white/10 border border-white/10 hover:border-cyan-400/40 flex items-center gap-2.5 text-left transition-all cursor-pointer"
+                            className="w-full px-3 py-2.5 rounded-2xl bg-black/40 hover:bg-white/10 border border-white/10 hover:border-cyan-400/40 flex items-center justify-between gap-2.5 text-left transition-all cursor-pointer"
                           >
-                            <div className="p-2 rounded-xl bg-cyan-500/15 text-cyan-300 border border-cyan-400/30">
-                              <Icon className="w-4 h-4" />
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="p-2 rounded-xl bg-cyan-500/15 text-cyan-300 border border-cyan-400/30 shrink-0">
+                                <Icon className="w-4 h-4" />
+                              </div>
+                              <span className="text-xs font-mono font-bold text-white truncate">
+                                {mod.label}
+                              </span>
                             </div>
-                            <span className="text-xs font-mono font-bold text-white truncate">
-                              {mod.label}
+                            <span className="px-2.5 py-1 rounded-full bg-white/10 text-[9px] font-mono font-bold text-cyan-300 shrink-0">
+                              OPEN
                             </span>
                           </button>
                         );

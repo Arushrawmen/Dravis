@@ -4,102 +4,169 @@
   body {
     background-color: #01040f;
     color: #e2e8f0;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     overflow-x: hidden;
   }
 }
 
-/* Liquid Glass System — Translucent Refractive Surfaces so Deep Space & 3D Micro-Decisions shine through */
-.liquid-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.34) 0%,
-    rgba(8, 15, 32, 0.22) 50%,
-    rgba(34, 211, 238, 0.05) 100%
-  );
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow:
-    0 8px 32px 0 rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
+/* ============================================================================
+   IPHONE STYLE LIQUID GLASS (DEEP BLUE & OBSIDIAN BLACK COMBINATION)
+   - Refined translucent glass panels with iOS specular highlights
+   - Deep cosmic blue & obsidian gradient with crisp 1px borders
+   - Inner white sheen + dynamic glow for genuine Apple Liquid Glass depth
+   ============================================================================ */
+
+#root,
+#dravis-root-container {
+  background-color: #01040f !important;
 }
 
+/* Primary iOS Liquid Glass Surface (Frames, Sidebars, Cards, Panels) */
+.liquid-glass,
+#dravis-root-container aside,
+#dravis-root-container header,
+#dravis-root-container footer,
+#dravis-root-container [class*="bg-slate-950"],
+#dravis-root-container [class*="bg-slate-900"],
+#dravis-root-container [class*="bg-[#020617]"] {
+  background: linear-gradient(
+    135deg,
+    rgba(6, 18, 38, 0.72) 0%,
+    rgba(2, 6, 23, 0.65) 50%,
+    rgba(14, 30, 62, 0.58) 100%
+  ) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.28) !important;
+  box-shadow:
+    0 12px 36px 0 rgba(0, 0, 0, 0.65),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Clearer Liquid Glass variant for nested elements */
 .liquid-glass-clear {
   background: linear-gradient(
     135deg,
-    rgba(15, 23, 42, 0.18) 0%,
-    rgba(2, 6, 23, 0.12) 100%
-  );
-  backdrop-filter: blur(8px) saturate(140%);
-  -webkit-backdrop-filter: blur(8px) saturate(140%);
-  border: 1px solid rgba(34, 211, 238, 0.22);
+    rgba(14, 35, 72, 0.45) 0%,
+    rgba(4, 12, 30, 0.35) 100%
+  ) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
   box-shadow:
-    0 4px 24px 0 rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+    0 8px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.28) !important;
 }
 
-/* Global Liquid Glass transparency override for HUD panels so background micro-decisions are visible */
-#dravis-root-container aside,
-#dravis-root-container header,
-#dravis-root-container main > div {
-  background-color: rgba(2, 6, 23, 0.24) !important;
+/* All Interactive Buttons & Option Pills: iOS Refractive Blue-Black Glass */
+#dravis-root-container button {
+  background: linear-gradient(
+    135deg,
+    rgba(14, 42, 85, 0.65) 0%,
+    rgba(3, 10, 26, 0.75) 100%
+  ) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(56, 189, 248, 0.32) !important;
+  color: #f8fafc !important;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-#dravis-root-container .bg-slate-950\/40,
-#dravis-root-container .bg-slate-950\/50,
-#dravis-root-container .bg-slate-950\/60,
-#dravis-root-container .bg-slate-950\/80,
-#dravis-root-container .bg-\[\#020617\]\/90,
-#dravis-root-container .bg-\[\#020617\]\/95 {
-  background-color: rgba(4, 10, 28, 0.28) !important;
-  backdrop-filter: blur(12px) saturate(150%);
+#dravis-root-container button:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 60, 120, 0.85) 0%,
+    rgba(6, 20, 50, 0.9) 100%
+  ) !important;
+  border-color: rgba(56, 189, 248, 0.75) !important;
+  box-shadow:
+    0 0 20px rgba(56, 189, 248, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
 }
 
-#dravis-root-container .bg-black\/40,
-#dravis-root-container .bg-black\/50,
-#dravis-root-container .bg-black\/60,
-#dravis-root-container .bg-white\/5 {
-  background-color: rgba(15, 23, 42, 0.22) !important;
-  backdrop-filter: blur(8px);
-  border-color: rgba(255, 255, 255, 0.14);
+#dravis-root-container button * {
+  color: inherit !important;
 }
 
-/* Sleek Cybernetic Custom Scrollbar */
+/* Input Fields & Textareas: iPhone Frosted Dark Blue Glass */
+#dravis-root-container input,
+#dravis-root-container select,
+#dravis-root-container textarea {
+  background: rgba(3, 10, 26, 0.68) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+#dravis-root-container input::placeholder,
+#dravis-root-container textarea::placeholder {
+  color: rgba(148, 163, 184, 0.65) !important;
+}
+
+#dravis-root-container input:focus,
+#dravis-root-container textarea:focus {
+  border-color: rgba(56, 189, 248, 0.8) !important;
+  box-shadow:
+    0 0 18px rgba(56, 189, 248, 0.35),
+    inset 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  outline: none !important;
+}
+
+/* Keep Main Stage & 3D World Canvas Viewport Background Pure Transparent so 3D Space & Galaxy shine */
+#dravis-root-container main,
+#dravis-micro-decision-view,
+#dravis-home-view,
+#dravis-root-container canvas,
+#dravis-root-container video {
+  background-color: transparent !important;
+}
+
+#dravis-root-container .bg-transparent {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Dynamic Cyan & Blue Glow Highlights */
+.glow-cyan-border {
+  border-color: rgba(34, 211, 238, 0.6) !important;
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.25) !important;
+}
+
+/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(2, 6, 23, 0.3);
+  background: rgba(1, 4, 15, 0.7);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(34, 211, 238, 0.3);
+  background: rgba(56, 189, 248, 0.35);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(34, 211, 238, 0.6);
+  background: rgba(56, 189, 248, 0.75);
 }
 
-/* Dot Grid Background Texture */
-.sleek-dot-grid {
-  background-image: radial-gradient(rgba(34, 211, 238, 0.18) 0.5px, transparent 0.5px);
-  background-size: 24px 24px;
+/* Range Sliders */
+#dravis-root-container input[type="range"] {
+  accent-color: #38bdf8 !important;
 }
 
-/* Hidden Scrollbar Utility for Hidden Swipe navigation */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Fullscreen Resolution Enforcement */
+/* Fullscreen Resolution Enforcement (1080p / 1080i / Ultra-Wide Viewport Support) */
 :fullscreen,
 :-webkit-full-screen,
 #dravis-root-container:fullscreen,
@@ -111,6 +178,5 @@
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
-  background-color: #020617 !important;
+  background-color: #01040f !important;
 }
-
