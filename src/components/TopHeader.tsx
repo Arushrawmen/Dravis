@@ -32,6 +32,7 @@ import {
 import { soundEffects } from "../utils/audioSynth";
 import { DRAVIS_LANGUAGES } from "../types";
 import dravisSparkLogo from "../assets/images/dravis_spark_logo_1789562293560.jpg";
+import { PWAInstallButton } from "./PWAInstallButton";
 
 interface TopHeaderProps {
   wakeWord: string;
@@ -565,8 +566,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                   <span className="hidden sm:inline">Plans</span>
                 </button>
               )}
+ 
+               {/* 9.6 PWA Native App Install Button */}
+               <PWAInstallButton />
 
-              {/* Divider */}
+               {/* Divider */}
               <div className="h-5 w-[1px] bg-white/15 mx-0.5" />
 
               {/* 10. Window & HUD Controls (Minimize Sidebars, Fullscreen / Exit Fullscreen, Restart/Close HUD) */}

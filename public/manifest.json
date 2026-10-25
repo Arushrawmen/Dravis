@@ -1,27 +1,39 @@
 {
   "id": "/",
-  "name": "Dravis ASI",
+  "name": "Dravis Autonomous Superintelligence",
   "short_name": "Dravis ASI",
-  "description": "Dravis - Advanced Autonomous Superintelligence with Voice STT/TTS, Dynamic Island Notch, Real-time Gemini Brain, Direct Calling, and Android Phone Resolution Mode.",
+  "description": "Dravis Autonomous Superintelligence - Advanced Sci-Fi Holographic HUD AI Assistant with Voice STT/TTS, Real-time Gemini Brain, Reasoning Engine, PC Automation, Memory Bank, and Vision Intelligence.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#020617",
   "theme_color": "#020617",
-  "categories": ["utilities", "productivity"],
+  "categories": ["utilities", "productivity", "artificial-intelligence"],
   "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    },
-    {
-      "src": "/icon.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
     }
   ]
 }

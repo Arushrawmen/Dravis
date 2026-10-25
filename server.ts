@@ -5826,6 +5826,12 @@ app.get("/ads.txt", (_req: Request, res: Response) => {
   res.send("google.com, pub-2203384651585087, DIRECT, f08c47fec0942fa0\n");
 });
 
+// Static assets from public/ directory (PWA icons, robots.txt, sitemap.xml, ads.txt)
+const publicPath = path.join(process.cwd(), "public");
+if (fs.existsSync(publicPath)) {
+  app.use(express.static(publicPath));
+}
+
 // Vite middleware integration for Dev vs Production
 async function startServer() {
   const isProd = process.env.NODE_ENV === "production";
@@ -5842,6 +5848,27 @@ async function startServer() {
       server: { middlewareMode: true, hmr: false, watch: null },
       appType: "spa",
     });
+
+    // In AI Studio sandbox/iframe environments, HMR WebSockets on custom ports are blocked by Cloud Run proxy.
+    // Intercept /@vite/client to serve a clean client where failing WebSocket transport is safely neutralized.
+    app.get("/@vite/client", async (_req: Request, res: Response, next) => {
+      try {
+        const result = await vite.transformRequest("/@vite/client");
+        if (result && result.code) {
+          const cleanCode = result.code.replace(
+            /const transport = normalizeModuleRunnerTransport\([\s\S]*?\n\);/,
+            "const transport = { connect: async () => {}, disconnect: async () => {}, send: () => {} };"
+          );
+          res.setHeader("Content-Type", "application/javascript");
+          res.setHeader("Cache-Control", "no-cache");
+          return res.send(cleanCode);
+        }
+      } catch {
+        // Fall back to vite.middlewares
+      }
+      next();
+    });
+
     app.use(vite.middlewares);
   }
 

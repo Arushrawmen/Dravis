@@ -37,22 +37,46 @@ export const GoogleAdSenseBanner: React.FC<GoogleAdSenseBannerProps> = ({
   const [adLoaded, setAdLoaded] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
 
+  const isLocalOrPreview =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname.includes("run.app") ||
+      window.location.hostname.includes("127.0.0.1"));
+
   useEffect(() => {
-    // Only attempt to push once per component mount
+    // In dev / preview sandbox environments or with placeholder ad slot, display the verified publisher preview card
+    // and skip adsbygoogle.push to avoid noisy TagErrors from Google AdSense script.
+    if (isLocalOrPreview || adSlot === "1002003004") {
+      setAdLoaded(true);
+      return;
+    }
+
     if (pushedRef.current) return;
 
-    try {
-      if (typeof window !== "undefined") {
-        window.adsbygoogle = window.adsbygoogle || [];
-        window.adsbygoogle.push({});
-        pushedRef.current = true;
-        setAdLoaded(true);
+    const timer = setTimeout(() => {
+      if (pushedRef.current) return;
+      try {
+        if (typeof window !== "undefined" && adRef.current) {
+          const width = adRef.current.offsetWidth || adRef.current.parentElement?.offsetWidth || 0;
+          const status = adRef.current.getAttribute("data-adsbygoogle-status");
+          if (!status && width > 0) {
+            try {
+              window.adsbygoogle = window.adsbygoogle || [];
+              window.adsbygoogle.push({});
+              pushedRef.current = true;
+              setAdLoaded(true);
+            } catch {
+              setHasError(true);
+            }
+          }
+        }
+      } catch {
+        setHasError(true);
       }
-    } catch (err) {
-      console.warn("[Google AdSense] Ad unit push notification:", err);
-      setHasError(true);
-    }
-  }, []);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [adSlot]);
 
   return (
     <div
@@ -82,19 +106,21 @@ export const GoogleAdSenseBanner: React.FC<GoogleAdSenseBannerProps> = ({
         </div>
       </div>
 
-      {/* Real Google AdSense Tag Container */}
-      <div className="w-full my-auto flex items-center justify-center overflow-hidden py-1">
-        <ins
-          ref={adRef}
-          className="adsbygoogle block w-full"
-          style={{ display: "block", textAlign: "center" }}
-          data-ad-client={client}
-          data-ad-slot={adSlot}
-          data-ad-format={adFormat}
-          data-full-width-responsive="true"
-          data-adtest={testMode ? "on" : undefined}
-        />
-      </div>
+      {/* Real Google AdSense Tag Container (Only mounted on live custom domain with valid slot) */}
+      {!isLocalOrPreview && adSlot !== "1002003004" && (
+        <div className="w-full my-auto flex items-center justify-center overflow-hidden py-1">
+          <ins
+            ref={adRef}
+            className="adsbygoogle block w-full"
+            style={{ display: "block", textAlign: "center" }}
+            data-ad-client={client}
+            data-ad-slot={adSlot}
+            data-ad-format={adFormat}
+            data-full-width-responsive="true"
+            data-adtest={testMode ? "on" : undefined}
+          />
+        </div>
+      )}
 
       {/* Fallback / Domain Verification Preview Card (shown while Google AdSense finishes reviewing dravis.ai.studio) */}
       <div className="w-full rounded-xl bg-slate-950/60 border border-cyan-500/20 p-2.5 flex items-center justify-between gap-3 text-xs">

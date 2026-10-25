@@ -825,7 +825,7 @@ export class SpeechEngine {
         if (errorType === "no-speech" || errorType === "aborted") {
           return;
         }
-        if (errorType === "not-allowed" || errorType === "service-not-allowed") {
+        if (errorType === "not-allowed" || errorType === "service-not-allowed" || errorType === "audio-capture") {
           this.isWakeWordActive = false;
         }
         this.currentListenOptions?.onError?.({

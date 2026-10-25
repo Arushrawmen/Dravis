@@ -51,6 +51,7 @@ import { ActiveAppWindowModal } from "./components/Modals/ActiveAppWindowModal";
 import { GitHubPushModal } from "./components/Modals/GitHubPushModal";
 import { AndroidCliModal } from "./components/Modals/AndroidCliModal";
 import { SubscriptionModal } from "./components/Modals/SubscriptionModal";
+import { OfflineIndicator } from "./components/OfflineIndicator";
 import { screenMonitorAgent } from "./utils/screenMonitorAgent";
 
 // Data & Utilities
@@ -4750,7 +4751,10 @@ function DravisApp() {
           }
         },
         onError: (err) => {
-          console.warn("Speech Recognition notice:", err?.message || err?.type || err);
+          const type = (err as any)?.type || (err as any)?.error;
+          if (type !== "audio-capture" && type !== "not-allowed" && type !== "no-speech" && type !== "aborted") {
+            console.warn("Speech Recognition notice:", (err as any)?.message || type || err);
+          }
           setIsListening(false);
           setVoiceState("ONLINE");
         },
@@ -6268,6 +6272,9 @@ function DravisApp() {
           );
         }}
       />
+
+      {/* 11. PWA OFFLINE CONNECTIVITY INDICATOR */}
+      <OfflineIndicator />
     </div>
   );
 }

@@ -2,21 +2,98 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Early error shield for benign Vite dev server WebSocket disconnects in iframe sandboxes
+      (function() {
+        var origConsoleError = console.error;
+        console.error = function() {
+          var first = arguments[0];
+          if (typeof first === 'string' && (
+            first.indexOf('[vite] failed to connect to websocket') !== -1 ||
+            first.indexOf('WebSocket closed without opened') !== -1 ||
+            first.indexOf('WebSocket connection to') !== -1
+          )) {
+            return;
+          }
+          return origConsoleError.apply(console, arguments);
+        };
+
+        var origConsoleWarn = console.warn;
+        console.warn = function() {
+          var first = arguments[0];
+          if (typeof first === 'string' && (
+            first.indexOf('[vite]') !== -1 && first.indexOf('websocket') !== -1
+          )) {
+            return;
+          }
+          return origConsoleWarn.apply(console, arguments);
+        };
+
+        window.addEventListener('unhandledrejection', function(e) {
+          var reason = e && (e.reason ? (e.reason.message || String(e.reason)) : '');
+          if (typeof reason === 'string' && (
+            reason.indexOf('WebSocket') !== -1 ||
+            reason.indexOf('websocket') !== -1 ||
+            reason.indexOf('ws:') !== -1 ||
+            reason.indexOf('wss:') !== -1
+          )) {
+            e.preventDefault();
+            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+          }
+        }, true);
+
+        window.addEventListener('error', function(e) {
+          var msg = e && (e.message || '');
+          if (typeof msg === 'string' && (
+            msg.indexOf('WebSocket') !== -1 ||
+            msg.indexOf('websocket') !== -1 ||
+            msg.indexOf('ws:') !== -1 ||
+            msg.indexOf('wss:') !== -1
+          )) {
+            e.preventDefault();
+            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+          }
+        }, true);
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Dravis ASI</title>
     <meta name="description" content="Dravis Autonomous Superintelligence - Advanced Sci-Fi Holographic HUD AI Assistant with Voice STT/TTS, Direct Calling, Real-time Gemini Brain, Reasoning Engine, PC Automation, Memory Bank, and Multimodal Vision Intelligence." />
     <meta property="og:title" content="Dravis ASI" />
     <meta property="og:description" content="Dravis Autonomous Superintelligence - Advanced Sci-Fi Holographic HUD AI Assistant with Voice STT/TTS, Direct Calling, Real-time Gemini Brain, Reasoning Engine, PC Automation, Memory Bank, and Multimodal Vision Intelligence." />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Dravis ASI" />
+    <meta property="og:image" content="/pwa-512x512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dravis ASI" />
+    <meta name="twitter:description" content="Dravis Autonomous Superintelligence - Advanced Sci-Fi Holographic HUD AI Assistant with Voice STT/TTS, Real-time Gemini Brain, Memory Bank, and Vision Intelligence." />
+    <meta name="twitter:image" content="/pwa-512x512.png" />
     <meta name="theme-color" content="#020617" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dravis ASI" />
     <meta name="google-adsense-account" content="ca-pub-2203384651585087" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2203384651585087" crossorigin="anonymous"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Dravis ASI",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "All",
+      "description": "Dravis Autonomous Superintelligence - Advanced Sci-Fi Holographic HUD AI Assistant with Voice STT/TTS, Real-time Gemini Brain, Memory Bank, and Multimodal Vision Intelligence.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      }
+    }
+    </script>
   </head>
   <body class="bg-[#020617] text-slate-200 overflow-hidden">
     <div id="root"></div>
