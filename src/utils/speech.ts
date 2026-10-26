@@ -809,7 +809,7 @@ export class SpeechEngine {
               this.currentListenOptions = null;
               callback?.(fullResult, true);
             }
-          }, 1400);
+          }, 2400);
         } else if (interimTranscript && this.currentListenOptions) {
           if (this.speechDebounceTimer) {
             clearTimeout(this.speechDebounceTimer);

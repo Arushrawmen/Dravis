@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import { MessageItem, VoiceState, UserProfile, FileItem } from "../types";
 import { soundEffects } from "../utils/audioSynth";
+import { GoogleAdSenseBanner } from "./AdSense/GoogleAdSenseBanner";
 import { BioScienceViewerCard } from "./BioScienceViewerCard";
 import { AudioVolumeVisualizer } from "./AudioVolumeVisualizer";
 
@@ -1222,6 +1223,13 @@ export const DravisChatView: React.FC<DravisChatViewProps> = ({
             </div>
           </motion.div>
         )}
+
+        <GoogleAdSenseBanner
+          client="ca-pub-2203384651585087"
+          adSlot="1002003004"
+          variant="SIDEBAR_BOX"
+          className="my-3"
+        />
 
         <div ref={messagesEndRef} />
       </div>

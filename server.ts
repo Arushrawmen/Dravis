@@ -20,6 +20,22 @@ const PORT = 3000;
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
+// Guaranteed download routes for production bundle
+app.get(["/api/download-bundle", "/dravis-production-bundle.zip"], (req, res) => {
+  try {
+    const zipPath = path.resolve(process.cwd(), "public/dravis-production-bundle.zip");
+    if (fs.existsSync(zipPath)) {
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader("Content-Disposition", 'attachment; filename="dravis-production-bundle.zip"');
+      return res.sendFile(zipPath);
+    } else {
+      return res.status(404).send("Production ZIP bundle not found.");
+    }
+  } catch (err: any) {
+    return res.status(500).send("Error serving download: " + (err?.message || String(err)));
+  }
+});
+
 // Active Gemini API key supplied via process.env (Web Dravis Api — projects/592931597990)
 const WEB_DRAVIS_API_CONFIG = {
   apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY || "",
@@ -1424,6 +1440,7 @@ app.post("/api/chat", async (req: Request, res: Response) => {
     userProfile = {},
     memories = [],
     memoryBank = [],
+    shortTermMemories = [],
     currentContext = {},
     multiTaskContext = null,
     llmProvider: requestedProvider,
@@ -1433,6 +1450,8 @@ app.post("/api/chat", async (req: Request, res: Response) => {
 
   const actualUserName = userProfile?.displayName || userProfile?.name || userName || "Arush Sir";
   const actualMemories = memoryBank.length > 0 ? memoryBank : memories;
+  const memSection = actualMemories.length > 0 ? "\nLong-Term Permanent Memory (Persistent User Facts):\n- " + (Array.isArray(actualMemories) ? actualMemories.join("\n- ") : String(actualMemories)) : "";
+  const stmSection = shortTermMemories.length > 0 ? "\nShort-Term Working Memory (Active Temporary Context):\n- " + (Array.isArray(shortTermMemories) ? shortTermMemories.join("\n- ") : String(shortTermMemories)) : "";
   const historyList = chatHistory.length > 0 ? chatHistory : conversationHistory;
   const selectedProvider: "GOOGLE" | "OPENAI" = requestedProvider || userProfile?.llmProvider || "GOOGLE";
   const selectedModel: string = requestedModel || userProfile?.llmModel || (selectedProvider === "OPENAI" ? "gpt-4o" : "gemini-3.6-flash");
@@ -1490,6 +1509,8 @@ The user has explicitly set their preferred output language to ${resolvedLang.na
 ${personalityDescriptions[personalityStyle] || personalityDescriptions.TONY_STARK}
 ${styleDescriptions[talkingStyle] || styleDescriptions.WITTY_CONCISE}
 ${kidsDirective}
+${memSection}
+${stmSection}
 Reply directly to "${message}" in ${resolvedLang.name} (${resolvedLang.code}).
 Only set actionType to OPEN_IN_CHROME or OPEN_APP if explicitly commanded to open/launch. For questions, set actionType to "NONE" and answer helpfully.
 Allowed actionType: NONE, CALL, OPEN_IN_CHROME, OPEN_APP, SEARCH_WEB, GENERATE_IMAGE, GENERATE_VIDEO, GENERATE_MUSIC, BIOSCIENCE_ANALYZE, GENERATE_FILE, BUILD_AAB_APP, GENERATE_PROMPT, CLICK_ON_SCREEN, TYPE_ON_SCREEN, OPEN_CODEX, AUTO_ARRANGE_WINDOWS.
@@ -5436,7 +5457,7 @@ app.delete("/api/db/records/:id", requireAuth, async (req: AuthRequest, res: Res
 // ============================================================================
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "rzp_test_TroOWzpPjRxerY";
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "cW50QiZ70e1iL6YzQuKsUCh2";
-const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || "arushgamer783@gmail.com";
+const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || "rawatdeepika21582@gmail.com";
 
 let razorpayClient: Razorpay | null = null;
 try {

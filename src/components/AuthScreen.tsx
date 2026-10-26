@@ -318,8 +318,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         className={`relative z-10 w-full ${
           isAndroidResolutionActive
             ? "max-w-[400px] rounded-[42px] bg-slate-950/85 border border-white/15 p-6 shadow-[0_24px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(34,211,238,0.18)]"
-            : sanitizedSavedAccounts.length > 0
-            ? "max-w-[880px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
             : "max-w-[460px] rounded-3xl bg-slate-950/85 border border-cyan-500/25 p-6 sm:p-7 shadow-[0_24px_80px_rgba(0,0,0,0.85),0_0_50px_rgba(6,182,212,0.2)]"
         } backdrop-blur-2xl flex flex-col gap-5`}
       >
@@ -332,117 +330,28 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
           </div>
         )}
 
-        <div
-          className={
-            isAndroidResolutionActive || sanitizedSavedAccounts.length === 0
-              ? "flex flex-col gap-5"
-              : "grid grid-cols-1 md:grid-cols-12 gap-6 items-start"
-          }
-        >
-          {/* LEFT / TOP COLUMN: Brand Identity + Saved Accounts Quick Switcher (if any saved accounts exist) */}
-          <div
-            className={
-              isAndroidResolutionActive || sanitizedSavedAccounts.length === 0
-                ? "flex flex-col gap-4"
-                : "md:col-span-5 flex flex-col gap-5 md:border-r md:border-white/10 md:pr-6"
-            }
-          >
-            {/* Glowing Dravis Avatar & Header */}
-            <div className="flex flex-col items-center text-center gap-2.5">
-              <div className="relative w-20 h-20 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-400/35 via-sky-400/20 to-amber-400/35 blur-xl animate-pulse" />
-                <img
-                  src={dravisSparkLogo}
-                  alt="Dravis"
-                  className="relative w-16 h-16 rounded-full object-cover shadow-[0_0_25px_rgba(34,211,238,0.5)]"
-                />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-white">
-                  Welcome to DRAVIS
-                </h1>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  {isAndroidResolutionActive
-                    ? "Android Liquid Glass Edition • Sign in with your account"
-                    : "Desktop Workstation OS • Sign in with your account"}
-                </p>
-              </div>
+        {/* Glowing Dravis Avatar & Header */}
+        <div className="flex flex-col items-center text-center gap-2.5">
+            <div className="relative w-20 h-20 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-400/35 via-sky-400/20 to-amber-400/35 blur-xl animate-pulse" />
+              <img
+                src={dravisSparkLogo}
+                alt="Dravis"
+                className="relative w-16 h-16 rounded-full object-cover shadow-[0_0_25px_rgba(34,211,238,0.5)]"
+              />
             </div>
 
-            {/* Saved Accounts List with Direct "Switch" Button Next to Account Name */}
-            {sanitizedSavedAccounts.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between px-1">
-                  <span className="text-[11px] font-mono font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <UserCheck className="w-3.5 h-3.5" />
-                    <span>Saved Accounts ({sanitizedSavedAccounts.length})</span>
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400">
-                    1-Click Switch
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-2 max-h-56 overflow-y-auto pr-0.5">
-                  {sanitizedSavedAccounts.map((acc) => {
-                    const counts = accountHistoryCounts[acc.id] || {
-                      chats: 3,
-                      memories: 2,
-                      logs: 2,
-                    };
-                    return (
-                      <div
-                        key={acc.id}
-                        className="p-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-cyan-400/40 transition-all flex items-center justify-between gap-2"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500/30 to-blue-600/30 border border-cyan-400/40 flex items-center justify-center text-cyan-200 font-bold text-sm shrink-0 overflow-hidden">
-                            {acc.avatarUrl ? (
-                              <img
-                                src={acc.avatarUrl}
-                                alt={acc.displayName}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              acc.displayName.charAt(0).toUpperCase()
-                            )}
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-bold text-white truncate">
-                                {acc.displayName}
-                              </span>
-                            </div>
-                            <span className="text-[10px] font-mono text-slate-400 block truncate">
-                              {acc.email}
-                            </span>
-                            <span className="text-[9px] font-mono text-cyan-300/80 flex items-center gap-1 mt-0.5">
-                              <History className="w-2.5 h-2.5" />
-                              {counts.chats} chats · {counts.memories} memories
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Switch Button right next to the account name */}
-                        <button
-                          type="button"
-                          onClick={() => handleSelectSavedAccount(acc)}
-                          disabled={isLoading}
-                          className="px-3 py-1.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-mono text-[11px] font-bold flex items-center gap-1 shrink-0 cursor-pointer shadow-[0_0_12px_rgba(34,211,238,0.35)] transition-all"
-                        >
-                          <ArrowLeftRight className="w-3 h-3" />
-                          <span>Switch</span>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            <div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-white">
+                Welcome to DRAVIS
+              </h1>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {isAndroidResolutionActive
+                  ? "Android Liquid Glass Edition • Sign in with your account"
+                  : "Desktop Workstation OS • Sign in with your account"}
+              </p>
+            </div>
           </div>
-
-          {/* RIGHT / MAIN COLUMN: Clean Login & Google Auth */}
-          <div className={isAndroidResolutionActive || sanitizedSavedAccounts.length === 0 ? "flex flex-col gap-4" : "md:col-span-7 flex flex-col gap-4"}>
             {/* Status Notification Alerts */}
             <AnimatePresence>
               {errorMsg && (
@@ -658,9 +567,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
               <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
               <span>Each account keeps its own private chat history, memories, files & profile.</span>
             </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-};
+          </motion.div>
+      </div>
+    );
+  };

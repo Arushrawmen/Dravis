@@ -651,6 +651,7 @@ export function buildDefaultAccountWorkspace(
       },
       messages: INITIAL_MESSAGES,
       memories: INITIAL_MEMORIES,
+      shortTermMemories: [],
       projects: INITIAL_PROJECTS,
       timelineLogs: INITIAL_TIMELINE_LOGS,
       files: INITIAL_FILES,
@@ -714,6 +715,7 @@ export function buildDefaultAccountWorkspace(
           source: "CONVERSATION",
         },
       ],
+      shortTermMemories: [],
       projects: [
         {
           id: "proj-studio-1",

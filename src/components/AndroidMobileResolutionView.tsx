@@ -93,6 +93,7 @@ interface AndroidMobileResolutionViewProps {
   onToggleListening: () => void;
   onSendChatMessage: (text: string) => void;
   chatMessages: Array<{
+    id?: string;
     role: "user" | "assistant";
     content: string;
     timestamp: string;
@@ -1188,7 +1189,7 @@ export const AndroidMobileResolutionView: React.FC<AndroidMobileResolutionViewPr
                 <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
                   {chatMessages.map((msg, i) => (
                     <div
-                      key={i}
+                      key={msg.id || `msg-${i}`}
                       className={`p-3 rounded-3xl text-xs leading-relaxed ${
                         msg.role === "user"
                           ? "bg-cyan-500/20 border border-cyan-400/40 text-cyan-50 ml-8"

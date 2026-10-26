@@ -51,6 +51,7 @@ export interface AccountWorkspaceData {
   userProfile: UserProfile;
   messages: MessageItem[];
   memories: MemoryEntry[];
+  shortTermMemories?: Array<{ id: string; text: string; timestamp: string; active: boolean }>;
   projects: ProjectItem[];
   timelineLogs: TimelineActionLog[];
   files: FileItem[];

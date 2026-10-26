@@ -1,0 +1,18 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ * Static Firebase Configuration Module
+ */
+
+export const firebaseConfig = {
+  projectId: "esoteric-petal-q48x0",
+  appId: "1:643663663851:web:e9f8a12928083c99b8a4ae",
+  apiKey: "AIzaSyCFeSetoVFj1eJASDiRskKzGGn8Ikk6_fw",
+  authDomain: "esoteric-petal-q48x0.firebaseapp.com",
+  firestoreDatabaseId: "ai-studio-dravis-9cbd734a-e70b-4638-bbac-0a08477bcccd",
+  storageBucket: "esoteric-petal-q48x0.firebasestorage.app",
+  messagingSenderId: "643663663851",
+  measurementId: "",
+  oAuthClientId: "643663663851-5j2o7jcdb4k4rser325mdtir1r8vaouc.apps.googleusercontent.com",
+  recaptchaSiteKey: "",
+};

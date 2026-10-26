@@ -302,6 +302,20 @@ function DravisApp() {
     const saved = localStorage.getItem("dravis_memories");
     return saved ? JSON.parse(saved) : INITIAL_MEMORIES;
   });
+  const [shortTermMemories, setShortTermMemories] = useState<Array<{ id: string; text: string; timestamp: string; active: boolean }>>(() => {
+    try {
+      const saved = localStorage.getItem("dravis_short_term_memories");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("dravis_short_term_memories", JSON.stringify(shortTermMemories));
+    } catch {}
+  }, [shortTermMemories]);
   const [messages, setMessages] = useState<MessageItem[]>(() => {
     const saved = localStorage.getItem("dravis_messages");
     if (saved) {
@@ -1231,13 +1245,11 @@ function DravisApp() {
         onEnd: () => {
           if (!speechEngine.isSpeaking() && speechEngine.getQueueLength() === 0) {
             setVoiceState("ONLINE");
-            if (userProfile.liveVoiceActive) {
-              setTimeout(() => {
-                if (handleToggleMicRef.current && !speechEngine.isSpeaking()) {
-                  handleToggleMicRef.current();
-                }
-              }, 400);
-            }
+            setTimeout(() => {
+              if (handleToggleMicRef.current && !speechEngine.isSpeaking()) {
+                handleToggleMicRef.current();
+              }
+            }, 350);
           }
         },
         onError: () => {
@@ -2754,6 +2766,44 @@ function DravisApp() {
     speechEngine.stopSpeech();
 
     const lowerCmd = trimmedCmd.toLowerCase();
+
+    // Biological Brain Memory System (Short-Term vs Long-Term Permanent Consolidation)
+    const isShortTermCue = /\b(थोड़ी देर|कुछ देर|temporary|temporarily|short[\s-]?term|for\s+now|थोड़ी देर के लिए)\b/i.test(trimmedCmd) || /थोड़ी\s+देर\s+के\s+लिए/i.test(trimmedCmd);
+    if (isShortTermCue) {
+      const newStm = {
+        id: "stm-" + Date.now(),
+        text: trimmedCmd,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        active: true,
+      };
+      setShortTermMemories((prev) => [newStm, ...prev].slice(0, 30));
+
+      // Automatically consolidate / persist into Long-Term Memory (LTM) so it is permanently remembered forever per user account
+      const ltmKey = `Temporary Note ${new Date().toLocaleDateString()}`;
+      const newLtm: MemoryEntry = {
+        id: "mem-" + Date.now(),
+        key: ltmKey,
+        value: trimmedCmd,
+        category: "PREFERENCE",
+        confidence: 0.99,
+        lastUpdated: "Just now",
+        source: "CONVERSATION",
+      };
+      setMemories((prev) => [newLtm, ...prev].slice(0, 80));
+    } else {
+      // Normal conversation automatically flows into Long-Term Memory permanent vector bank
+      const autoLtmKey = `Fact ${new Date().toLocaleDateString()}`;
+      const autoLtm: MemoryEntry = {
+        id: "mem-" + Date.now(),
+        key: autoLtmKey,
+        value: trimmedCmd,
+        category: "PREFERENCE",
+        confidence: 0.95,
+        lastUpdated: "Just now",
+        source: "CONVERSATION",
+      };
+      setMemories((prev) => [autoLtm, ...prev].slice(0, 80));
+    }
 
     // Real-time Auto-Adapt Language detection from user's message
     const autoDetected = detectLanguageFromText(commandText);
@@ -4368,7 +4418,8 @@ function DravisApp() {
           provider: userProfile.llmProvider || "GOOGLE",
           model: userProfile.llmModel || (userProfile.llmProvider === "OPENAI" ? "gpt-4o" : "gemini-3.6-flash"),
           userProfile,
-          memories: memories.slice(0, 6).map((m) => `${m.key}: ${m.value}`),
+          memories: memories.slice(0, 8).map((m) => `${m.key}: ${m.value}`),
+          shortTermMemories: shortTermMemories.slice(0, 5).map((s) => s.text),
           telemetry,
         }),
       });
@@ -5079,6 +5130,7 @@ function DravisApp() {
         userProfile,
         messages,
         memories,
+        shortTermMemories,
         projects,
         timelineLogs,
         files,
@@ -5093,6 +5145,7 @@ function DravisApp() {
     userProfile,
     messages,
     memories,
+    shortTermMemories,
     projects,
     timelineLogs,
     files,
@@ -5130,6 +5183,7 @@ function DravisApp() {
         userProfile,
         messages,
         memories,
+        shortTermMemories,
         projects,
         timelineLogs,
         files,
@@ -5183,6 +5237,7 @@ function DravisApp() {
     });
     setMessages(targetWorkspace.messages);
     setMemories(targetWorkspace.memories);
+    setShortTermMemories(targetWorkspace.shortTermMemories || []);
     setProjects(targetWorkspace.projects);
     setTimelineLogs(targetWorkspace.timelineLogs);
     setFiles(targetWorkspace.files);
@@ -5318,6 +5373,7 @@ function DravisApp() {
           onToggleListening={handleToggleMic}
           onSendChatMessage={handleSendCommand}
           chatMessages={messages.map((m) => ({
+            id: m.id,
             role: m.role as "user" | "assistant",
             content: m.text,
             timestamp: m.timestamp,
